@@ -2,6 +2,7 @@ const userModel = require("../models/userModel");
 const projectModel = require("../models/projectModel");
 var bcrypt = require("bcryptjs");
 var jwt = require("jsonwebtoken");
+const Anthropic = require("@anthropic-ai/sdk");
 
 const secret = "secret";
 
@@ -319,9 +320,6 @@ exports.askAI = async (req, res) => {
         console.log("Could not fetch project language:", err.message);
       }
     }
-
-    // Import Anthropic SDK
-    const Anthropic = require("@anthropic-ai/sdk");
 
     // Initialize Anthropic client with API key
     const anthropic = new Anthropic({
