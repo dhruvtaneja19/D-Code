@@ -18,7 +18,7 @@
 ## 📸 Screenshots
 
 ![Screenshot](https://github.com/dhruvtaneja19/D-Code/blob/main/Screenshot%202025-08-28%20152942.png)
-![Screenshot](https://github.com/dhruvtaneja19/D-Code/blob/main/Screenshot%202025-07-13%20142025.png)
+![Screenshot](https://github.com/dhruvtaneja19/D-Code/blob/main/Screenshot%202025-08-28%20153005.png)
 ![Screenshot](https://github.com/dhruvtaneja19/D-Code/blob/main/Screenshot%202025-07-13%20142043.png)
 ![Screenshot](https://github.com/dhruvtaneja19/D-Code/blob/main/Screenshot%202025-07-13%20142254.png)
 ![Screenshot](https://github.com/dhruvtaneja19/D-Code/blob/main/Screenshot%202025-07-13%20142305.png)
