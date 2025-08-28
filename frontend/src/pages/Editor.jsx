@@ -255,14 +255,14 @@ const Editor = () => {
   return (
     <>
       <NavbarNew darkMode={darkMode} setDarkMode={setDarkMode} />
-      <motion.div className="flex flex-col min-h-screen bg-[#0F172A]">
+      <motion.div className="flex flex-col min-h-screen bg-[#0F172A] pt-20">
         <div className="bg-[#1E293B] text-[#E2E8F0] text-lg font-semibold p-4 text-center shadow-md">
           {data ? data.name : "Loading..."}
         </div>
 
-        <div className="flex-1 flex px-6 py-4">
+        <div className="flex-1 flex px-6 py-2">
           <div
-            className={`flex-1 rounded-2xl shadow-2xl p-2 md:p-6 flex min-h-[70vh] border-4 bg-clip-padding transition-colors duration-500 ${
+            className={`flex-1 rounded-2xl shadow-2xl p-2 md:p-4 flex min-h-[calc(100vh-200px)] max-h-[calc(100vh-200px)] border-4 bg-clip-padding transition-colors duration-500 ${
               darkMode
                 ? "bg-gradient-to-br from-[#1E293B] to-[#0F172A] border-transparent"
                 : "bg-gradient-to-br from-[#f8fafc] to-[#e0e7ef] border-[#c7d2fe]"
@@ -287,7 +287,7 @@ const Editor = () => {
                 Input
               </h2>
               <div
-                className={`h-full min-h-[60vh] rounded-xl border-2 shadow-xl overflow-hidden flex-1 transition-colors duration-500 ${
+                className={`h-full rounded-xl border-2 shadow-xl overflow-hidden flex-1 transition-colors duration-500 ${
                   darkMode
                     ? "border-[#3B82F6] bg-[#111827]/80"
                     : "border-[#818cf8] bg-white/80"
@@ -335,7 +335,7 @@ const Editor = () => {
                 Output
               </h2>
               <pre
-                className={`flex-1 p-4 text-base font-mono rounded-xl shadow-inner min-h-[60vh] border-2 transition-colors duration-500 ${
+                className={`flex-1 p-4 text-base font-mono rounded-xl shadow-inner border-2 transition-colors duration-500 overflow-auto ${
                   error
                     ? "text-[#F87171]"
                     : darkMode
