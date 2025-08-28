@@ -20,7 +20,7 @@
 ![Screenshot](https://github.com/dhruvtaneja19/D-Code/blob/main/Screenshot%202025-08-28%20152942.png)
 ![Screenshot](https://github.com/dhruvtaneja19/D-Code/blob/main/Screenshot%202025-08-28%20153005.png)
 ![Screenshot](https://github.com/dhruvtaneja19/D-Code/blob/main/Screenshot%202025-08-28%20153027.png)
-![Screenshot](https://github.com/dhruvtaneja19/D-Code/blob/main/Screenshot%202025-07-13%20142254.png)
+![Screenshot](https://github.com/dhruvtaneja19/D-Code/blob/main/Screenshot%202025-08-28%20153244.png)
 
 
 ---
