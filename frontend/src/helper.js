@@ -7,17 +7,34 @@ export const api_base_url = import.meta.env.PROD
 // Helper function for API calls with better error handling
 export const makeApiCall = async (endpoint, options = {}) => {
   try {
-    // Extra-careful URL handling to prevent double slashes
-    let normalizedEndpoint = endpoint.replace(/^\/+/, ""); // Remove leading slashes
+    // ULTRA-careful URL handling to prevent any possibility of double slashes
+    let cleanEndpoint = endpoint;
+    
+    // Remove ALL leading slashes
+    while (cleanEndpoint.startsWith('/')) {
+      cleanEndpoint = cleanEndpoint.substring(1);
+    }
+    
+    // Ensure base URL doesn't end with slash
+    let cleanBaseUrl = api_base_url;
+    while (cleanBaseUrl.endsWith('/')) {
+      cleanBaseUrl = cleanBaseUrl.substring(0, cleanBaseUrl.length - 1);
+    }
 
-    // Construct the final URL
-    const url = `${api_base_url}/${normalizedEndpoint}`;
+    // Construct the final URL with explicit single slash
+    const url = cleanBaseUrl + '/' + cleanEndpoint;
+    
+    // Final safety check - replace any double slashes with single slash (except for protocol://)
+    const safeUrl = url.replace(/([^:]\/)\/+/g, '$1');
 
-    console.log("Making API call to:", url);
-    console.log(
-      "Environment:",
-      import.meta.env.PROD ? "PRODUCTION" : "DEVELOPMENT"
-    );
+    console.log("=== API CALL DEBUG INFO ===");
+    console.log("Original endpoint:", endpoint);
+    console.log("Clean endpoint:", cleanEndpoint);
+    console.log("Base URL:", cleanBaseUrl);
+    console.log("Constructed URL:", url);
+    console.log("Final safe URL:", safeUrl);
+    console.log("Environment:", import.meta.env.PROD ? "PRODUCTION" : "DEVELOPMENT");
+    console.log("=== END DEBUG INFO ===");
 
     // Parse the body if it's a string (already stringified)
     let requestBody = options.body;
@@ -48,7 +65,7 @@ export const makeApiCall = async (endpoint, options = {}) => {
           : JSON.stringify(requestBody);
     }
 
-    const response = await fetch(url, fetchOptions);
+    const response = await fetch(safeUrl, fetchOptions);
 
     if (!response.ok) {
       const errorText = await response.text();
