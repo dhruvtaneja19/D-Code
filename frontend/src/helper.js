@@ -8,7 +8,7 @@ export const api_base_url = import.meta.env.PROD
 export const makeApiCall = async (endpoint, options = {}) => {
   try {
     // Extra-careful URL handling to prevent double slashes
-    let normalizedEndpoint = endpoint.replace(/^\/+/, ''); // Remove leading slashes
+    let normalizedEndpoint = endpoint.replace(/^\/+/, ""); // Remove leading slashes
 
     // Construct the final URL
     const url = `${api_base_url}/${normalizedEndpoint}`;

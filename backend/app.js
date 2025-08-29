@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname, "public")));
 
 // CORS configuration - Very permissive to debug issues
 const corsOptions = {
-  origin: '*', // Allow all origins
+  origin: "*", // Allow all origins
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: [
@@ -50,7 +50,7 @@ const corsOptions = {
     "Accept",
   ],
   preflightContinue: false,
-  optionsSuccessStatus: 204
+  optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
