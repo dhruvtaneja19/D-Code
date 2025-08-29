@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import NavbarNew from "../components/NavbarNew";
 import Footer from "../components/Footer";
 import Select from "react-select";
-import { api_base_url } from "../helper";
+import { api_base_url, makeApiCall } from "../helper";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion"; // Framer Motion import
@@ -234,20 +234,21 @@ echo "My name is $name"`,
   };
 
   const getProjects = async () => {
-    fetch(api_base_url + "/getProjects", {
-      mode: "cors",
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token: localStorage.getItem("token") }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setProjects(data.projects);
-        } else {
-          toast.error(data.msg);
-        }
+    try {
+      const data = await makeApiCall("/getProjects", {
+        method: "POST",
+        body: JSON.stringify({ token: localStorage.getItem("token") })
       });
+
+      if (data.success) {
+        setProjects(data.projects);
+      } else {
+        toast.error(data.msg);
+      }
+    } catch (error) {
+      console.error("Failed to get projects:", error);
+      toast.error("Failed to load projects");
+    }
   };
 
   const handleLanguageChange = (selectedOption) => {
@@ -255,7 +256,7 @@ echo "My name is $name"`,
     console.log("Selected language:", selectedOption);
   };
 
-  const createProj = () => {
+  const createProj = async () => {
     if (!name.trim()) {
       toast.error("Project name is required!");
       return;
@@ -266,87 +267,96 @@ echo "My name is $name"`,
     }
 
     setIsCreating(true);
-    fetch(api_base_url + "/createProj", {
-      mode: "cors",
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: name,
-        projLanguage: selectedLanguage.value,
-        token: localStorage.getItem("token"),
-        version: selectedLanguage.version,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setName("");
-          setSelectedLanguage(null);
-          setIsCreateModelShow(false);
-          navigate("/editor/" + data.projectId);
-        } else {
-          toast.error(data.msg);
-        }
-      })
-      .finally(() => setIsCreating(false));
-  };
-
-  const deleteProject = (id) => {
-    let conf = confirm("Are you sure you want to delete this project?");
-    if (conf) {
-      fetch(api_base_url + "/deleteProject", {
-        mode: "cors",
+    try {
+      const data = await makeApiCall("/createProj", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          projectId: id,
+          name: name,
+          projLanguage: selectedLanguage.value,
           token: localStorage.getItem("token"),
-        }),
-      })
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            getProjects();
-          } else {
-            toast.error(data.msg);
-          }
-        });
+          version: selectedLanguage.version,
+        })
+      });
+
+      if (data.success) {
+        setName("");
+        setSelectedLanguage(null);
+        setIsCreateModelShow(false);
+        navigate("/editor/" + data.projectId);
+      } else {
+        toast.error(data.msg);
+      }
+    } catch (error) {
+      console.error("Failed to create project:", error);
+      toast.error("Failed to create project");
+    } finally {
+      setIsCreating(false);
     }
   };
 
-  const updateProj = () => {
+  const deleteProject = async (id) => {
+    let conf = confirm("Are you sure you want to delete this project?");
+    if (conf) {
+      try {
+        const data = await makeApiCall("/deleteProject", {
+          method: "POST",
+          body: JSON.stringify({
+            projectId: id,
+            token: localStorage.getItem("token"),
+          })
+        });
+
+        if (data.success) {
+          getProjects();
+        } else {
+          toast.error(data.msg);
+        }
+      } catch (error) {
+        console.error("Failed to delete project:", error);
+        toast.error("Failed to delete project");
+      }
+    }
+  };
+
+  const updateProj = async () => {
     if (!name.trim()) {
       toast.error("Project name is required!");
       return;
     }
 
     setIsUpdating(true);
-    fetch(api_base_url + "/editProject", {
-      mode: "cors",
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        projectId: editProjId,
-        token: localStorage.getItem("token"),
-        name: name,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setIsEditModelShow(false);
-          setName("");
-          setEditProjId("");
-          getProjects();
-        } else {
-          toast.error(data.msg);
-          setIsEditModelShow(false);
-          setName("");
-          setEditProjId("");
-          getProjects();
-        }
-      })
-      .finally(() => setIsUpdating(false));
+    try {
+      const data = await makeApiCall("/editProject", {
+        method: "POST",
+        body: JSON.stringify({
+          projectId: editProjId,
+          token: localStorage.getItem("token"),
+          name: name,
+        })
+      });
+
+      if (data.success) {
+        setIsEditModelShow(false);
+        setName("");
+        setEditProjId("");
+        getProjects();
+      } else {
+        toast.error(data.msg);
+        setIsEditModelShow(false);
+        setName("");
+        setEditProjId("");
+        getProjects();
+      }
+    } catch (error) {
+      console.error("Failed to update project:", error);
+      toast.error("Failed to update project");
+      setIsEditModelShow(false);
+      setName("");
+      setEditProjId("");
+      getProjects();
+    } finally {
+      setIsUpdating(false);
+    }
   };
 
   // Framer Motion animation variants

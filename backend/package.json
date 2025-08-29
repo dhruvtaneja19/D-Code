@@ -7,7 +7,11 @@
     "dev": "nodemon ./bin/www",
     "test": "node test-api.js",
     "test:health": "node test-health.js",
-    "test:db": "node test-db-connection.js"
+    "test:db": "node test-db-connection.js",
+    "health": "node health-check.js",
+    "debug": "node health-check.js",
+    "vercel:check": "node check-vercel.js",
+    "status": "node status.js"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.56.0",

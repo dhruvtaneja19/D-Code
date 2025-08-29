@@ -35,9 +35,17 @@ const corsOptions = {
       "http://localhost:3000",
       "https://localhost:5173",
       "https://d-code-eight.vercel.app", // Your frontend URL
+      "https://d-code-frontend.vercel.app", // Potential alternate URL
+      "https://d-code.vercel.app", // Potential alternate URL
       process.env.FRONTEND_URL,
     ].filter(Boolean); // Remove undefined values
 
+    // For Vercel environment, we should be more permissive to make debugging easier
+    if (process.env.VERCEL || process.env.VERCEL_URL) {
+      callback(null, true);
+      return;
+    }
+    
     if (
       allowedOrigins.includes(origin) ||
       process.env.NODE_ENV === "development"

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import NavbarNew from "../components/NavbarNew";
 import Editor2 from "@monaco-editor/react";
 import { useParams, useNavigate } from "react-router-dom";
-import { api_base_url } from "../helper";
+import { api_base_url, makeApiCall } from "../helper";
 import { toast } from "react-toastify";
 import { motion } from "framer-motion";
 import { Dialog } from "@headlessui/react";
@@ -97,17 +97,17 @@ const Editor = () => {
     const token = localStorage.getItem("token");
     if (!token) return;
 
-    setIsLoading(true);
-    fetch(`${api_base_url}/getProject`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        token: token,
-        projectId: id,
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
+    const loadProject = async () => {
+      setIsLoading(true);
+      try {
+        const data = await makeApiCall("/getProject", {
+          method: "POST",
+          body: JSON.stringify({
+            token: token,
+            projectId: id,
+          })
+        });
+
         if (data.success) {
           setCode(data.project.code || "");
           setData(data.project);
@@ -115,31 +115,41 @@ const Editor = () => {
           toast.error(data.msg);
           navigate("/");
         }
-      })
-      .catch(() => {
+      } catch (error) {
+        console.error("Failed to load project:", error);
         toast.error("Failed to load project.");
         navigate("/");
-      })
-      .finally(() => setIsLoading(false));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadProject();
   }, [id, navigate]);
 
-  const saveProject = () => {
+  const saveProject = async () => {
     setIsSaving(true);
-    fetch(`${api_base_url}/saveProject`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        token: localStorage.getItem("token"),
-        projectId: id,
-        code: code.trim(),
-      }),
-    })
-      .then((res) => res.json())
-      .then((data) =>
-        data.success ? toast.success(data.msg) : toast.error(data.msg)
-      )
-      .catch(() => toast.error("Failed to save the project."))
-      .finally(() => setIsSaving(false));
+    try {
+      const data = await makeApiCall("/saveProject", {
+        method: "POST",
+        body: JSON.stringify({
+          token: localStorage.getItem("token"),
+          projectId: id,
+          code: code.trim(),
+        })
+      });
+
+      if (data.success) {
+        toast.success(data.msg);
+      } else {
+        toast.error(data.msg);
+      }
+    } catch (error) {
+      console.error("Failed to save project:", error);
+      toast.error("Failed to save the project.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   useEffect(() => {
@@ -218,20 +228,15 @@ const Editor = () => {
     setAiResponse("");
 
     try {
-      const response = await fetch(`${api_base_url}/askAI`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const result = await makeApiCall('/askAI', {
+        method: 'POST',
+        body: {
           code: code,
           question: aiQuestion,
           language: data?.projLanguage || "javascript",
           projectId: id,
-        }),
+        },
       });
-
-      const result = await response.json();
 
       if (result.success) {
         setAiResponse(result.response);

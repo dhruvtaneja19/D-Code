@@ -1,7 +1,5 @@
-// Use proxy for development, direct URL for production
-export const api_base_url = import.meta.env.PROD 
-  ? (import.meta.env.VITE_API_URL || "https://d-code-backend.vercel.app")  // Production: use direct URL or proxy
-  : "/api";  // Development: use Vite proxy
+// Always use proxy route to avoid CORS issues
+export const api_base_url = "/api";
 
 // Helper function for API calls with better error handling
 export const makeApiCall = async (endpoint, options = {}) => {
@@ -17,7 +15,7 @@ export const makeApiCall = async (endpoint, options = {}) => {
     console.log("Is PROD:", import.meta.env.PROD);
     
     const response = await fetch(url, {
-      mode: "cors",
+      mode: "same-origin", // Use same-origin since we're using proxy
       ...options,
       headers: {
         "Content-Type": "application/json",
@@ -26,13 +24,17 @@ export const makeApiCall = async (endpoint, options = {}) => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      const errorText = await response.text();
+      console.error("Response error:", response.status, errorText);
+      throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
     }
 
     return await response.json();
   } catch (error) {
     console.error("API call failed:", error);
-    console.error("Failed URL:", api_base_url + endpoint);
+    const baseUrl = api_base_url.endsWith('/') ? api_base_url.slice(0, -1) : api_base_url;
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
+    console.error("Failed URL:", baseUrl + cleanEndpoint);
     throw error;
   }
 };
