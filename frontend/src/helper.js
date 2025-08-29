@@ -9,23 +9,23 @@ export const makeApiCall = async (endpoint, options = {}) => {
   try {
     // ULTRA-careful URL handling to prevent any possibility of double slashes
     let cleanEndpoint = endpoint;
-    
+
     // Remove ALL leading slashes
-    while (cleanEndpoint.startsWith('/')) {
+    while (cleanEndpoint.startsWith("/")) {
       cleanEndpoint = cleanEndpoint.substring(1);
     }
-    
+
     // Ensure base URL doesn't end with slash
     let cleanBaseUrl = api_base_url;
-    while (cleanBaseUrl.endsWith('/')) {
+    while (cleanBaseUrl.endsWith("/")) {
       cleanBaseUrl = cleanBaseUrl.substring(0, cleanBaseUrl.length - 1);
     }
 
     // Construct the final URL with explicit single slash
-    const url = cleanBaseUrl + '/' + cleanEndpoint;
-    
+    const url = cleanBaseUrl + "/" + cleanEndpoint;
+
     // Final safety check - replace any double slashes with single slash (except for protocol://)
-    const safeUrl = url.replace(/([^:]\/)\/+/g, '$1');
+    const safeUrl = url.replace(/([^:]\/)\/+/g, "$1");
 
     console.log("=== API CALL DEBUG INFO ===");
     console.log("Original endpoint:", endpoint);
@@ -33,7 +33,10 @@ export const makeApiCall = async (endpoint, options = {}) => {
     console.log("Base URL:", cleanBaseUrl);
     console.log("Constructed URL:", url);
     console.log("Final safe URL:", safeUrl);
-    console.log("Environment:", import.meta.env.PROD ? "PRODUCTION" : "DEVELOPMENT");
+    console.log(
+      "Environment:",
+      import.meta.env.PROD ? "PRODUCTION" : "DEVELOPMENT"
+    );
     console.log("=== END DEBUG INFO ===");
 
     // Parse the body if it's a string (already stringified)
