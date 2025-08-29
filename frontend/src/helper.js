@@ -8,17 +8,23 @@ export const api_base_url = import.meta.env.PROD
 export const testUrlConstruction = () => {
   const testCases = [
     "/getProjects",
-    "getProjects", 
+    "getProjects",
     "//getProjects",
     "/getProjects/",
-    "getProjects/"
+    "getProjects/",
   ];
-  
+
   console.log("=== URL CONSTRUCTION TESTS ===");
-  testCases.forEach(endpoint => {
-    const baseStr = api_base_url.endsWith("/") ? api_base_url.slice(0, -1) : api_base_url;
-    const cleanEndpoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
-    const finalCleanEndpoint = cleanEndpoint.endsWith("/") ? cleanEndpoint.slice(0, -1) : cleanEndpoint;
+  testCases.forEach((endpoint) => {
+    const baseStr = api_base_url.endsWith("/")
+      ? api_base_url.slice(0, -1)
+      : api_base_url;
+    const cleanEndpoint = endpoint.startsWith("/")
+      ? endpoint.slice(1)
+      : endpoint;
+    const finalCleanEndpoint = cleanEndpoint.endsWith("/")
+      ? cleanEndpoint.slice(0, -1)
+      : cleanEndpoint;
     const finalURL = `${baseStr}/${finalCleanEndpoint}`;
     console.log(`${endpoint} -> ${finalURL}`);
   });
@@ -34,19 +40,19 @@ export const makeApiCall = async (endpoint, options = {}) => {
 
     // BULLETPROOF URL HANDLING - Handles all edge cases
     // Step 1: Clean the base URL - remove any trailing slashes
-    const baseStr = api_base_url.replace(/\/+$/, '');
-    
+    const baseStr = api_base_url.replace(/\/+$/, "");
+
     // Step 2: Clean the endpoint - remove leading AND trailing slashes, and collapse multiple slashes
     let cleanEndpoint = endpoint
-      .replace(/^\/+/, '')  // Remove leading slashes
-      .replace(/\/+$/, '')  // Remove trailing slashes  
-      .replace(/\/+/g, '/'); // Collapse multiple slashes to single slash
-    
+      .replace(/^\/+/, "") // Remove leading slashes
+      .replace(/\/+$/, "") // Remove trailing slashes
+      .replace(/\/+/g, "/"); // Collapse multiple slashes to single slash
+
     // Step 3: Handle empty endpoint case
     if (!cleanEndpoint) {
-      cleanEndpoint = '';
+      cleanEndpoint = "";
     }
-    
+
     // Step 4: Construct final URL with guaranteed single slash separation
     const finalURL = cleanEndpoint ? `${baseStr}/${cleanEndpoint}` : baseStr;
 
