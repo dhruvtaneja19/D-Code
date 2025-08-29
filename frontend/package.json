@@ -8,7 +8,10 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "vercel-build": "vite build"
+    "vercel-build": "vite build",
+    "test": "node test-frontend.js",
+    "test:api": "node test-api-connection.js",
+    "test:build": "npm run build && npm run preview"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
