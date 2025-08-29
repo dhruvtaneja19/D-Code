@@ -68,73 +68,42 @@ app.use((req, res, next) => {
   next();
 });
 
+// COMPREHENSIVE CORS SETUP - Place this BEFORE any other middleware except logging
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    "http://localhost:5173",
+    "https://d-code-eight.vercel.app",
+  ];
+
+  const origin = req.get("origin");
+
+  // Allow requests from allowed origins or no origin (for testing)
+  if (!origin || allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin || "*");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS"
+    );
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
+    res.header("Access-Control-Max-Age", "86400"); // 24 hours
+  }
+
+  // Handle preflight requests immediately
+  if (req.method === "OPTIONS") {
+    return res.status(204).end();
+  }
+
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-
-// CORS configuration - Allow both local and deployed frontend origins with credentials
-const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests from these origins
-    const allowedOrigins = [
-      "http://localhost:5173",
-      "https://d-code-eight.vercel.app",
-    ];
-
-    // Allow requests with no origin (like mobile apps, curl requests)
-    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
-      callback(null, true);
-    } else {
-      console.log("Blocked by CORS:", origin);
-      callback(new Error("Not allowed by CORS"));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  allowedHeaders: [
-    "Content-Type",
-    "Authorization",
-    "X-Requested-With",
-    "Accept",
-  ],
-  preflightContinue: false,
-  optionsSuccessStatus: 204,
-  maxAge: 86400, // Pre-flight requests can be cached for 24 hours
-};
-
-app.use(cors(corsOptions));
-
-// Dedicated middleware to handle preflight OPTIONS requests
-app.use((req, res, next) => {
-  // Special handling for OPTIONS requests - critical for CORS preflight
-  if (req.method === "OPTIONS") {
-    const allowedOrigins = [
-      "http://localhost:5173",
-      "https://d-code-eight.vercel.app",
-    ];
-    const origin = req.headers.origin;
-
-    if (allowedOrigins.includes(origin)) {
-      res.header("Access-Control-Allow-Origin", origin);
-      res.header(
-        "Access-Control-Allow-Methods",
-        "GET, POST, PUT, DELETE, OPTIONS"
-      );
-      res.header(
-        "Access-Control-Allow-Headers",
-        "Content-Type, Authorization, X-Requested-With, Accept"
-      );
-      res.header("Access-Control-Allow-Credentials", "true");
-      res.header("Access-Control-Max-Age", "86400"); // Cache preflight for 24 hours
-      return res.status(204).end();
-    } else {
-      console.log("Blocked OPTIONS by CORS:", origin);
-      return res.status(403).json({ error: "Not allowed by CORS" });
-    }
-  }
-  next();
-});
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);

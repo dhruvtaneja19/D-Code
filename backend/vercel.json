@@ -8,36 +8,7 @@
   ],
   "routes": [
     {
-      "src": "//(.*)",
-      "status": 308,
-      "headers": { "Location": "/$1" }
-    },
-    {
       "src": "/(.*)",
-      "methods": ["OPTIONS"],
-      "headers": {
-        "Access-Control-Allow-Origin": "https://d-code-eight.vercel.app",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, Accept",
-        "Access-Control-Allow-Credentials": "true",
-        "Access-Control-Max-Age": "86400"
-      },
-      "status": 204
-    },
-    {
-      "src": "/(.*)/",
-      "methods": ["GET", "POST", "PUT", "DELETE"],
-      "status": 308,
-      "headers": { "Location": "/$1" }
-    },
-    {
-      "src": "/(.*)",
-      "headers": {
-        "Access-Control-Allow-Origin": "https://d-code-eight.vercel.app",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-        "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, Accept",
-        "Access-Control-Allow-Credentials": "true"
-      },
       "dest": "/app.js"
     }
   ],
