@@ -12,14 +12,19 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "https://d-code-backend.vercel.app/$1",
+      "src": "/api/(?<path>.*)",
+      "dest": "https://d-code-backend.vercel.app/$path",
       "headers": {
         "Access-Control-Allow-Origin": "https://d-code-eight.vercel.app",
         "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
         "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With, Accept",
         "Access-Control-Allow-Credentials": "true"
       }
+    },
+    {
+      "src": "/api/(.*)/",
+      "status": 308,
+      "headers": { "Location": "/api/$1" }
     },
     {
       "src": "/assets/(.*)",

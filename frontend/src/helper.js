@@ -10,18 +10,34 @@ export const makeApiCall = async (endpoint, options = {}) => {
     const url = baseUrl + cleanEndpoint;
     
     console.log("Making API call to:", url);
-    console.log("Environment mode:", import.meta.env.MODE);
-    console.log("Is DEV:", import.meta.env.DEV);
-    console.log("Is PROD:", import.meta.env.PROD);
     
-    const response = await fetch(url, {
-      mode: "same-origin", // Use same-origin since we're using proxy
-      ...options,
+    // Parse the body if it's a string (already stringified)
+    let requestBody = options.body;
+    if (typeof options.body === 'string') {
+      try {
+        requestBody = JSON.parse(options.body);
+      } catch (e) {
+        // Not JSON, keep as is
+      }
+    }
+    
+    // Create a new options object with the correct structure
+    const fetchOptions = {
+      method: options.method || 'GET',
       headers: {
         "Content-Type": "application/json",
-        ...options.headers,
+        ...(options.headers || {})
       },
-    });
+      credentials: 'include',
+      ...options
+    };
+    
+    // Set the body correctly
+    if (requestBody) {
+      fetchOptions.body = typeof requestBody === 'string' ? requestBody : JSON.stringify(requestBody);
+    }
+    
+    const response = await fetch(url, fetchOptions);
 
     if (!response.ok) {
       const errorText = await response.text();
