@@ -14,20 +14,20 @@ var router = express.Router();
 
 /* GET home page. */
 router.get("/", function (req, res, next) {
-  res.json({ 
-    message: "D-Code Backend API is running!", 
+  res.json({
+    message: "D-Code Backend API is running!",
     status: "success",
     timestamp: new Date().toISOString(),
-    version: "1.0.0"
+    version: "1.0.0",
   });
 });
 
 /* Health check route */
 router.get("/health", function (req, res, next) {
-  res.json({ 
+  res.json({
     status: "healthy",
     timestamp: new Date().toISOString(),
-    uptime: process.uptime()
+    uptime: process.uptime(),
   });
 });
 

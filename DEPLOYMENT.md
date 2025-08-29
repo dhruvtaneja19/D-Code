@@ -66,10 +66,12 @@ After deploying both services, update your frontend to use the correct backend U
 Update your backend CORS configuration to allow requests from your frontend domain:
 
 ```javascript
-app.use(cors({
-  origin: ['https://your-frontend-url.vercel.app', 'http://localhost:5173'],
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: ["https://your-frontend-url.vercel.app", "http://localhost:5173"],
+    credentials: true,
+  })
+);
 ```
 
 ## Important Notes

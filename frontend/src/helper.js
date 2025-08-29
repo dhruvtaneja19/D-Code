@@ -1,25 +1,33 @@
-export const api_base_url = import.meta.env.VITE_API_URL || "http://localhost:3000";
+// Use proxy for development, direct URL for production
+export const api_base_url = import.meta.env.DEV 
+  ? "/api"  // Use proxy in development
+  : (import.meta.env.VITE_API_URL || "http://localhost:3000");
 
 // Helper function for API calls with better error handling
 export const makeApiCall = async (endpoint, options = {}) => {
   try {
-    console.log('Making API call to:', api_base_url + endpoint);
-    const response = await fetch(api_base_url + endpoint, {
-      mode: "cors",
+    const url = api_base_url + endpoint;
+    console.log("Making API call to:", url);
+    console.log("Environment mode:", import.meta.env.MODE);
+    console.log("Is DEV:", import.meta.env.DEV);
+    
+    const response = await fetch(url, {
+      mode: import.meta.env.DEV ? "same-origin" : "cors",
       ...options,
       headers: {
         "Content-Type": "application/json",
-        ...options.headers
-      }
+        ...options.headers,
+      },
     });
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
-    
+
     return await response.json();
   } catch (error) {
-    console.error('API call failed:', error);
+    console.error("API call failed:", error);
+    console.error("Failed URL:", api_base_url + endpoint);
     throw error;
   }
 };
