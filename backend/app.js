@@ -50,10 +50,10 @@ app.use((req, res, next) => {
 
 // CRITICAL: CORS MIDDLEWARE MUST BE FIRST - Place this BEFORE any other middleware
 app.use((req, res, next) => {
-  const allowedOrigins = [
-    "http://localhost:5173",
-    "https://d-code-eight.vercel.app",
-  ];
+  // Use environment variable for allowed origins, fallback to hardcoded values
+  const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim())
+    : ["http://localhost:5173", "https://d-code-new.vercel.app"];
 
   const origin = req.get("origin");
   console.log(`🌐 [CORS] Request from origin: ${origin || "no origin"}`);
