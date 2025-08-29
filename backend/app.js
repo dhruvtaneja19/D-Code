@@ -56,7 +56,7 @@ app.use((req, res, next) => {
   ];
 
   const origin = req.get("origin");
-  console.log(`🌐 [CORS] Request from origin: ${origin || 'no origin'}`);
+  console.log(`🌐 [CORS] Request from origin: ${origin || "no origin"}`);
 
   // Allow requests from allowed origins or no origin (for testing)
   if (!origin || allowedOrigins.includes(origin)) {
@@ -71,7 +71,7 @@ app.use((req, res, next) => {
       "Origin, X-Requested-With, Content-Type, Accept, Authorization"
     );
     res.header("Access-Control-Max-Age", "86400"); // 24 hours
-    console.log(`✅ [CORS] Headers set for origin: ${origin || 'no origin'}`);
+    console.log(`✅ [CORS] Headers set for origin: ${origin || "no origin"}`);
   } else {
     console.log(`❌ [CORS] Blocked origin: ${origin}`);
   }
