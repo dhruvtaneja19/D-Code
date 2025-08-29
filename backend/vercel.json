@@ -8,6 +8,11 @@
   ],
   "routes": [
     {
+      "src": "//(.*)",
+      "status": 308,
+      "headers": { "Location": "/$1" }
+    },
+    {
       "src": "/(.*)",
       "methods": ["OPTIONS"],
       "headers": {
