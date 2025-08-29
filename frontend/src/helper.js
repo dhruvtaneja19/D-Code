@@ -1,28 +1,17 @@
-// Use direct API URL in production, proxy in development
-// This ensures we're using the right approach in each environment
+// Set up the API base URL based on environment
+// In production, use the backend URL directly rather than through proxy
 export const api_base_url = import.meta.env.PROD
-  ? "/api" // Use proxy routes in production for Vercel
+  ? "https://d-code-backend.vercel.app" // Direct backend URL in production
   : "http://localhost:3000"; // Direct URL in development
 
 // Helper function for API calls with better error handling
 export const makeApiCall = async (endpoint, options = {}) => {
   try {
     // Extra-careful URL handling to prevent double slashes
-    // First normalize the endpoint by removing any leading/trailing slashes
-    let normalizedEndpoint = endpoint;
-    while (normalizedEndpoint.startsWith("/")) {
-      normalizedEndpoint = normalizedEndpoint.substring(1);
-    }
+    let normalizedEndpoint = endpoint.replace(/^\/+/, ''); // Remove leading slashes
 
-    // Then construct the URL properly
-    let url;
-    if (import.meta.env.PROD) {
-      // In production, use proxy URL with careful path construction
-      url = `/api/${normalizedEndpoint}`;
-    } else {
-      // In development, use direct URL to backend
-      url = `${api_base_url}/${normalizedEndpoint}`;
-    }
+    // Construct the final URL
+    const url = `${api_base_url}/${normalizedEndpoint}`;
 
     console.log("Making API call to:", url);
     console.log(

@@ -38,39 +38,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// CORS configuration
+// CORS configuration - Very permissive to debug issues
 const corsOptions = {
-  origin: function (origin, callback) {
-    // Allow requests with no origin (mobile apps, curl, etc.)
-    if (!origin) return callback(null, true);
-
-    const allowedOrigins = [
-      "http://localhost:5173",
-      "http://localhost:3000",
-      "https://localhost:5173",
-      "https://d-code-eight.vercel.app", // Your frontend URL
-      "https://d-code-frontend.vercel.app", // Potential alternate URL
-      "https://d-code.vercel.app", // Potential alternate URL
-      process.env.FRONTEND_URL,
-    ].filter(Boolean); // Remove undefined values
-
-    // For Vercel environment, we should be more permissive to make debugging easier
-    if (process.env.VERCEL || process.env.VERCEL_URL) {
-      callback(null, true);
-      return;
-    }
-
-    if (
-      allowedOrigins.includes(origin) ||
-      process.env.NODE_ENV === "development"
-    ) {
-      callback(null, true);
-    } else {
-      // For debugging, allow all origins temporarily
-      console.log("CORS origin:", origin);
-      callback(null, true);
-    }
-  },
+  origin: '*', // Allow all origins
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: [
@@ -80,7 +50,7 @@ const corsOptions = {
     "Accept",
   ],
   preflightContinue: false,
-  optionsSuccessStatus: 204,
+  optionsSuccessStatus: 204
 };
 
 app.use(cors(corsOptions));
