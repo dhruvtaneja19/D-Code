@@ -7,33 +7,23 @@ export const api_base_url = import.meta.env.PROD
 // Helper function for API calls with better error handling
 export const makeApiCall = async (endpoint, options = {}) => {
   try {
-    // ULTRA-careful URL handling to prevent any possibility of double slashes
-    let cleanEndpoint = endpoint;
-
-    // Remove ALL leading slashes
-    while (cleanEndpoint.startsWith("/")) {
-      cleanEndpoint = cleanEndpoint.substring(1);
-    }
-
-    // Ensure base URL doesn't end with slash
-    let cleanBaseUrl = api_base_url;
-    while (cleanBaseUrl.endsWith("/")) {
-      cleanBaseUrl = cleanBaseUrl.substring(0, cleanBaseUrl.length - 1);
-    }
-
-    // Construct the final URL with explicit single slash
-    const url = cleanBaseUrl + "/" + cleanEndpoint;
-
-    // Enhanced safety check - replace any double slashes with single slash (except for protocol://)
-    // This regex is more thorough to catch all possible double slash patterns
-    const safeUrl = url.replace(/([^:])\/\/+/g, "$1/");
+    // COMPLETELY REWRITTEN URL HANDLING - NO CHANCE OF DOUBLE SLASHES
+    
+    // Step 1: Create URL object from base URL to ensure proper parsing
+    const baseURL = new URL(api_base_url);
+    
+    // Step 2: Clean the endpoint by removing any leading or trailing slashes
+    const cleanEndpoint = endpoint.replace(/^\/+|\/+$/g, "");
+    
+    // Step 3: Create a proper URL by using the URL constructor 
+    // This ensures proper URL formation according to web standards
+    const finalURL = new URL(cleanEndpoint, baseURL);
 
     console.log("=== API CALL DEBUG INFO ===");
     console.log("Original endpoint:", endpoint);
     console.log("Clean endpoint:", cleanEndpoint);
-    console.log("Base URL:", cleanBaseUrl);
-    console.log("Constructed URL:", url);
-    console.log("Final safe URL:", safeUrl);
+    console.log("Base URL:", baseURL.toString());
+    console.log("Final URL:", finalURL.toString());
     console.log(
       "Environment:",
       import.meta.env.PROD ? "PRODUCTION" : "DEVELOPMENT"
@@ -69,7 +59,7 @@ export const makeApiCall = async (endpoint, options = {}) => {
           : JSON.stringify(requestBody);
     }
 
-    const response = await fetch(safeUrl, fetchOptions);
+    const response = await fetch(finalURL.toString(), fetchOptions);
 
     if (!response.ok) {
       const errorText = await response.text();
@@ -80,11 +70,7 @@ export const makeApiCall = async (endpoint, options = {}) => {
     return await response.json();
   } catch (error) {
     console.error("API call failed:", error);
-    const baseUrl = api_base_url.endsWith("/")
-      ? api_base_url.slice(0, -1)
-      : api_base_url;
-    const cleanEndpoint = endpoint.startsWith("/") ? endpoint : "/" + endpoint;
-    console.error("Failed URL:", baseUrl + cleanEndpoint);
+    console.error("Failed URL:", finalURL.toString());
     throw error;
   }
 };
