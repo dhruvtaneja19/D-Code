@@ -31,6 +31,16 @@ router.get("/health", function (req, res, next) {
   });
 });
 
+/* Test route for getProjects (GET method for browser testing) */
+router.get("/getProjects", function (req, res, next) {
+  res.json({
+    message: "getProjects endpoint is available",
+    note: "This endpoint requires POST method with authentication token",
+    status: "endpoint_exists",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 router.post("/signUp", signUp); // signUp is the controller function
 router.post("/login", login);
 router.post("/createProj", createProj);

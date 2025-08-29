@@ -164,6 +164,15 @@ exports.saveProject = async (req, res) => {
 exports.getProjects = async (req, res) => {
   try {
     let { token } = req.body;
+
+    // Check if token is provided
+    if (!token) {
+      return res.status(400).json({
+        success: false,
+        msg: "Token is required. Please login first.",
+      });
+    }
+
     let decoded = jwt.verify(token, secret);
     let user = await userModel.findOne({ _id: decoded.userId });
 
