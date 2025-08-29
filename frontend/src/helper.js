@@ -13,15 +13,15 @@ export const makeApiCall = async (endpoint, options = {}) => {
 
     // SUPER SIMPLE URL HANDLING - Direct string joining with fixed format
     // Step 1: Normalize the base URL to ensure it doesn't end with a slash
-    const baseStr = api_base_url.endsWith('/')
+    const baseStr = api_base_url.endsWith("/")
       ? api_base_url.slice(0, -1)
       : api_base_url;
-    
+
     // Step 2: Normalize the endpoint to ensure it doesn't start with a slash
-    const cleanEndpoint = endpoint.startsWith('/')
+    const cleanEndpoint = endpoint.startsWith("/")
       ? endpoint.slice(1)
       : endpoint;
-    
+
     // Step 3: Manual string concatenation with a guaranteed single slash
     const finalURL = `${baseStr}/${cleanEndpoint}`;
 
