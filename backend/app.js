@@ -73,15 +73,15 @@ const corsOptions = {
     // Allow requests from these origins
     const allowedOrigins = [
       "http://localhost:5173",
-      "https://d-code-eight.vercel.app"
+      "https://d-code-eight.vercel.app",
     ];
-    
+
     // Allow requests with no origin (like mobile apps, curl requests)
     if (!origin || allowedOrigins.indexOf(origin) !== -1) {
       callback(null, true);
     } else {
       console.log("Blocked by CORS:", origin);
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
   credentials: true,
@@ -94,7 +94,7 @@ const corsOptions = {
   ],
   preflightContinue: false,
   optionsSuccessStatus: 204,
-  maxAge: 86400 // Pre-flight requests can be cached for 24 hours
+  maxAge: 86400, // Pre-flight requests can be cached for 24 hours
 };
 
 app.use(cors(corsOptions));
@@ -102,13 +102,19 @@ app.use(cors(corsOptions));
 // Dedicated middleware to handle preflight OPTIONS requests
 app.use((req, res, next) => {
   // Special handling for OPTIONS requests - critical for CORS preflight
-  if (req.method === 'OPTIONS') {
-    const allowedOrigins = ["http://localhost:5173", "https://d-code-eight.vercel.app"];
+  if (req.method === "OPTIONS") {
+    const allowedOrigins = [
+      "http://localhost:5173",
+      "https://d-code-eight.vercel.app",
+    ];
     const origin = req.headers.origin;
-    
+
     if (allowedOrigins.includes(origin)) {
       res.header("Access-Control-Allow-Origin", origin);
-      res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+      res.header(
+        "Access-Control-Allow-Methods",
+        "GET, POST, PUT, DELETE, OPTIONS"
+      );
       res.header(
         "Access-Control-Allow-Headers",
         "Content-Type, Authorization, X-Requested-With, Accept"

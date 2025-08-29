@@ -8,15 +8,15 @@ export const api_base_url = import.meta.env.PROD
 export const makeApiCall = async (endpoint, options = {}) => {
   try {
     // COMPLETELY REWRITTEN URL HANDLING - NO CHANCE OF DOUBLE SLASHES
-    
+
     // NEW APPROACH: Direct string manipulation with careful checking
-    
+
     // Step 1: Remove any trailing slashes from the base URL
-    let baseStr = api_base_url.replace(/\/+$/, '');
-    
+    let baseStr = api_base_url.replace(/\/+$/, "");
+
     // Step 2: Remove any leading slashes from the endpoint
-    let cleanEndpoint = endpoint.replace(/^\/+/, '');
-    
+    let cleanEndpoint = endpoint.replace(/^\/+/, "");
+
     // Step 3: Construct the URL with a single slash between
     const finalURL = new URL(`${baseStr}/${cleanEndpoint}`);
 
