@@ -1,7 +1,7 @@
 // Use proxy for development, direct URL for production
-export const api_base_url = import.meta.env.DEV 
-  ? "/api"  // Use proxy in development
-  : (import.meta.env.VITE_API_URL || "http://localhost:3000");
+export const api_base_url = import.meta.env.PROD 
+  ? (import.meta.env.VITE_API_URL || "https://d-code-backend.vercel.app")  // Production: use direct URL or proxy
+  : "/api";  // Development: use Vite proxy
 
 // Helper function for API calls with better error handling
 export const makeApiCall = async (endpoint, options = {}) => {
@@ -10,9 +10,10 @@ export const makeApiCall = async (endpoint, options = {}) => {
     console.log("Making API call to:", url);
     console.log("Environment mode:", import.meta.env.MODE);
     console.log("Is DEV:", import.meta.env.DEV);
+    console.log("Is PROD:", import.meta.env.PROD);
     
     const response = await fetch(url, {
-      mode: import.meta.env.DEV ? "same-origin" : "cors",
+      mode: "cors",
       ...options,
       headers: {
         "Content-Type": "application/json",

@@ -11,7 +11,8 @@
     "vercel-build": "vite build",
     "test": "node test-frontend.js",
     "test:api": "node test-api-connection.js",
-    "test:build": "npm run build && npm run preview"
+    "test:build": "npm run build && npm run preview",
+    "debug": "node debug-build.js"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
