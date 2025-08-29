@@ -19,6 +19,20 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
 
 app.use(logger("dev"));
+
+// URL cleanup middleware - Handle double slashes in URLs
+app.use((req, res, next) => {
+  // Clean URL path if it contains double slashes
+  if (req.url.includes('//')) {
+    console.log(`[URL Cleanup] Original URL: ${req.url}`);
+    // Normalize multiple slashes to single slashes (except for protocol://)
+    const cleanUrl = req.url.replace(/([^:])\/+/g, '$1/');
+    console.log(`[URL Cleanup] Redirecting to: ${cleanUrl}`);
+    return res.redirect(301, cleanUrl);
+  }
+  next();
+});
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
