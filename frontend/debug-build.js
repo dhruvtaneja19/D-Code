@@ -4,13 +4,17 @@
  * Debug Frontend Build
  */
 
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 console.log('🔍 Debugging Frontend Build Issues...');
 
 // Check if dist folder exists
-const distPath = path.join(process.cwd(), 'dist');
+const distPath = path.join(__dirname, 'dist');
 if (fs.existsSync(distPath)) {
   console.log('✅ dist folder exists');
   
