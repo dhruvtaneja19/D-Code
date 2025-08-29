@@ -48,6 +48,43 @@ app.use((req, res, next) => {
   next();
 });
 
+// CRITICAL: CORS MIDDLEWARE MUST BE FIRST - Place this BEFORE any other middleware
+app.use((req, res, next) => {
+  const allowedOrigins = [
+    "http://localhost:5173",
+    "https://d-code-eight.vercel.app",
+  ];
+
+  const origin = req.get("origin");
+  console.log(`🌐 [CORS] Request from origin: ${origin || 'no origin'}`);
+
+  // Allow requests from allowed origins or no origin (for testing)
+  if (!origin || allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin || "*");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS"
+    );
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    );
+    res.header("Access-Control-Max-Age", "86400"); // 24 hours
+    console.log(`✅ [CORS] Headers set for origin: ${origin || 'no origin'}`);
+  } else {
+    console.log(`❌ [CORS] Blocked origin: ${origin}`);
+  }
+
+  // Handle preflight requests immediately - CRITICAL
+  if (req.method === "OPTIONS") {
+    console.log(`🔄 [CORS] Handling OPTIONS preflight request`);
+    return res.status(204).end();
+  }
+
+  next();
+});
+
 // URL cleanup middleware - Handle double slashes in URLs (but not for OPTIONS requests)
 app.use((req, res, next) => {
   // NEVER redirect OPTIONS requests as they are CORS preflight requests
@@ -65,38 +102,6 @@ app.use((req, res, next) => {
     console.log(`[URL Cleanup] Redirecting to: ${cleanUrl}`);
     return res.redirect(301, cleanUrl);
   }
-  next();
-});
-
-// COMPREHENSIVE CORS SETUP - Place this BEFORE any other middleware except logging
-app.use((req, res, next) => {
-  const allowedOrigins = [
-    "http://localhost:5173",
-    "https://d-code-eight.vercel.app",
-  ];
-
-  const origin = req.get("origin");
-
-  // Allow requests from allowed origins or no origin (for testing)
-  if (!origin || allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin || "*");
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header(
-      "Access-Control-Allow-Methods",
-      "GET, POST, PUT, DELETE, OPTIONS"
-    );
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
-    res.header("Access-Control-Max-Age", "86400"); // 24 hours
-  }
-
-  // Handle preflight requests immediately
-  if (req.method === "OPTIONS") {
-    return res.status(204).end();
-  }
-
   next();
 });
 
