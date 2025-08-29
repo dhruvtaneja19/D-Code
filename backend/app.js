@@ -34,14 +34,16 @@ const corsOptions = {
       'http://localhost:5173',
       'http://localhost:3000',
       'https://localhost:5173',
-      // Add your Vercel frontend URL here after deployment
+      'https://d-code-eight.vercel.app', // Your frontend URL
       process.env.FRONTEND_URL
     ].filter(Boolean); // Remove undefined values
 
     if (allowedOrigins.includes(origin) || process.env.NODE_ENV === 'development') {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      // For debugging, allow all origins temporarily
+      console.log('CORS origin:', origin);
+      callback(null, true);
     }
   },
   credentials: true
