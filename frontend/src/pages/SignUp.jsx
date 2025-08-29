@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import logo from "../images/logos/logo.png"
 import { Link, useNavigate } from 'react-router-dom';
-import { api_base_url } from '../helper';
+import { api_base_url, makeApiCall } from '../helper';
 import { toast } from 'react-toastify';
 
 const SignUp = () => {
@@ -12,27 +12,31 @@ const SignUp = () => {
 
   const navigate = useNavigate();
 
-  const submitForm = (e) => {
+    const submitForm = async (e) => {
     e.preventDefault();
-    fetch(api_base_url + "/signUp",{
-      mode: "cors",
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        fullName: fullName,
-        email: email,
-        pwd: pwd
-      })
-    }).then(res => res.json()).then(data => {
-      if(data.success){
-        navigate("/login");
-      }
-      else{
+    
+    try {
+      console.log("Submitting signup form...");
+      const data = await makeApiCall("/signUp", {
+        method: "POST",
+        body: JSON.stringify({
+          fullName: fullName,
+          email: email,
+          pwd: pwd
+        })
+      });
+
+      if (data.success) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("isLoggedIn", true);
+        window.location.href = "/"
+      } else {
         toast.error(data.msg);
       }
-    })
+    } catch (error) {
+      console.error("Signup failed:", error);
+      toast.error("Failed to create account. Please try again.");
+    }
   };
 
   return (

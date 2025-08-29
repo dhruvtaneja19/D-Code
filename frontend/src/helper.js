@@ -6,7 +6,11 @@ export const api_base_url = import.meta.env.PROD
 // Helper function for API calls with better error handling
 export const makeApiCall = async (endpoint, options = {}) => {
   try {
-    const url = api_base_url + endpoint;
+    // Clean up URL to avoid double slashes
+    const baseUrl = api_base_url.endsWith('/') ? api_base_url.slice(0, -1) : api_base_url;
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
+    const url = baseUrl + cleanEndpoint;
+    
     console.log("Making API call to:", url);
     console.log("Environment mode:", import.meta.env.MODE);
     console.log("Is DEV:", import.meta.env.DEV);
