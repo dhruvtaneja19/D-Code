@@ -23,7 +23,7 @@ export const makeApiCall = async (endpoint, options = {}) => {
     console.log("=== API CALL DEBUG INFO ===");
     console.log("Original endpoint:", endpoint);
     console.log("Clean endpoint:", cleanEndpoint);
-    console.log("Base URL:", baseURL.toString());
+    console.log("Base URL:", baseStr);
     console.log("Final URL:", finalURL.toString());
     console.log(
       "Environment:",
