@@ -48,9 +48,15 @@ app.use((req, res, next) => {
   next();
 });
 
-// URL cleanup middleware - Handle double slashes in URLs
+// URL cleanup middleware - Handle double slashes in URLs (but not for OPTIONS requests)
 app.use((req, res, next) => {
-  // Clean URL path if it contains double slashes
+  // NEVER redirect OPTIONS requests as they are CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    console.log(`🔒 [CORS] OPTIONS request detected - skipping URL cleanup`);
+    return next();
+  }
+  
+  // Clean URL path if it contains double slashes for non-OPTIONS requests
   if (req.url.includes("//")) {
     console.log(`🚨 [URL Cleanup] DOUBLE SLASH DETECTED!`);
     console.log(`[URL Cleanup] Original URL: ${req.url}`);

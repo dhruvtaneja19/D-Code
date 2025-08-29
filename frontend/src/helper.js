@@ -4,6 +4,27 @@ export const api_base_url = import.meta.env.PROD
   ? "https://d-code-backend.vercel.app" // Direct backend URL in production
   : "http://localhost:3000"; // Direct URL in development
 
+// Test function to verify URL construction (remove in production)
+export const testUrlConstruction = () => {
+  const testCases = [
+    "/getProjects",
+    "getProjects", 
+    "//getProjects",
+    "/getProjects/",
+    "getProjects/"
+  ];
+  
+  console.log("=== URL CONSTRUCTION TESTS ===");
+  testCases.forEach(endpoint => {
+    const baseStr = api_base_url.endsWith("/") ? api_base_url.slice(0, -1) : api_base_url;
+    const cleanEndpoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
+    const finalCleanEndpoint = cleanEndpoint.endsWith("/") ? cleanEndpoint.slice(0, -1) : cleanEndpoint;
+    const finalURL = `${baseStr}/${finalCleanEndpoint}`;
+    console.log(`${endpoint} -> ${finalURL}`);
+  });
+  console.log("=== END TESTS ===");
+};
+
 // Helper function for API calls with better error handling
 export const makeApiCall = async (endpoint, options = {}) => {
   try {
@@ -11,19 +32,23 @@ export const makeApiCall = async (endpoint, options = {}) => {
 
     // NEW APPROACH: Direct string manipulation with careful checking
 
-    // SUPER SIMPLE URL HANDLING - Direct string joining with fixed format
-    // Step 1: Normalize the base URL to ensure it doesn't end with a slash
-    const baseStr = api_base_url.endsWith("/")
-      ? api_base_url.slice(0, -1)
-      : api_base_url;
-
-    // Step 2: Normalize the endpoint to ensure it doesn't start with a slash
-    const cleanEndpoint = endpoint.startsWith("/")
-      ? endpoint.slice(1)
-      : endpoint;
-
-    // Step 3: Manual string concatenation with a guaranteed single slash
-    const finalURL = `${baseStr}/${cleanEndpoint}`;
+    // BULLETPROOF URL HANDLING - Handles all edge cases
+    // Step 1: Clean the base URL - remove any trailing slashes
+    const baseStr = api_base_url.replace(/\/+$/, '');
+    
+    // Step 2: Clean the endpoint - remove leading AND trailing slashes, and collapse multiple slashes
+    let cleanEndpoint = endpoint
+      .replace(/^\/+/, '')  // Remove leading slashes
+      .replace(/\/+$/, '')  // Remove trailing slashes  
+      .replace(/\/+/g, '/'); // Collapse multiple slashes to single slash
+    
+    // Step 3: Handle empty endpoint case
+    if (!cleanEndpoint) {
+      cleanEndpoint = '';
+    }
+    
+    // Step 4: Construct final URL with guaranteed single slash separation
+    const finalURL = cleanEndpoint ? `${baseStr}/${cleanEndpoint}` : baseStr;
 
     console.log("=== API CALL DEBUG INFO ===");
     console.log("Original endpoint:", endpoint);
