@@ -6,11 +6,6 @@ module.exports = (req, res) => {
     success: true,
     message: "Feedback Collection API is running",
     timestamp: new Date().toISOString(),
-    routes: [
-      "/api/auth",
-      "/api/users",
-      "/api/feedback", 
-      "/api/admin"
-    ]
+    routes: ["/api/auth", "/api/users", "/api/feedback", "/api/admin"],
   });
 };

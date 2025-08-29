@@ -23,10 +23,10 @@ app.use(logger("dev"));
 // URL cleanup middleware - Handle double slashes in URLs
 app.use((req, res, next) => {
   // Clean URL path if it contains double slashes
-  if (req.url.includes('//')) {
+  if (req.url.includes("//")) {
     console.log(`[URL Cleanup] Original URL: ${req.url}`);
     // Normalize multiple slashes to single slashes (except for protocol://)
-    const cleanUrl = req.url.replace(/([^:])\/+/g, '$1/');
+    const cleanUrl = req.url.replace(/([^:])\/+/g, "$1/");
     console.log(`[URL Cleanup] Redirecting to: ${cleanUrl}`);
     return res.redirect(301, cleanUrl);
   }
@@ -59,7 +59,7 @@ const corsOptions = {
       callback(null, true);
       return;
     }
-    
+
     if (
       allowedOrigins.includes(origin) ||
       process.env.NODE_ENV === "development"
@@ -72,20 +72,28 @@ const corsOptions = {
     }
   },
   credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: [
+    "Content-Type",
+    "Authorization",
+    "X-Requested-With",
+    "Accept",
+  ],
   preflightContinue: false,
-  optionsSuccessStatus: 204
+  optionsSuccessStatus: 204,
 };
 
 app.use(cors(corsOptions));
 
 // Handle preflight OPTIONS requests manually for all routes
-app.options('*', (req, res) => {
-  res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With, Accept');
-  res.header('Access-Control-Allow-Credentials', 'true');
+app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Content-Type, Authorization, X-Requested-With, Accept"
+  );
+  res.header("Access-Control-Allow-Credentials", "true");
   res.status(204).send();
 });
 

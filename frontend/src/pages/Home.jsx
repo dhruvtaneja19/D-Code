@@ -237,7 +237,7 @@ echo "My name is $name"`,
     try {
       const data = await makeApiCall("/getProjects", {
         method: "POST",
-        body: JSON.stringify({ token: localStorage.getItem("token") })
+        body: JSON.stringify({ token: localStorage.getItem("token") }),
       });
 
       if (data.success) {
@@ -275,7 +275,7 @@ echo "My name is $name"`,
           projLanguage: selectedLanguage.value,
           token: localStorage.getItem("token"),
           version: selectedLanguage.version,
-        })
+        }),
       });
 
       if (data.success) {
@@ -303,7 +303,7 @@ echo "My name is $name"`,
           body: JSON.stringify({
             projectId: id,
             token: localStorage.getItem("token"),
-          })
+          }),
         });
 
         if (data.success) {
@@ -332,7 +332,7 @@ echo "My name is $name"`,
           projectId: editProjId,
           token: localStorage.getItem("token"),
           name: name,
-        })
+        }),
       });
 
       if (data.success) {

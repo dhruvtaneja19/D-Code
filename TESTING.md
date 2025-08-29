@@ -5,6 +5,7 @@ This guide explains how to test your D-Code application to ensure everything is 
 ## Quick Start
 
 ### Test Everything at Once
+
 ```bash
 # Test local development
 node test-full-stack.js
@@ -50,11 +51,13 @@ npm run test:build
 ### Backend Tests
 
 1. **Health Check (`npm run test:health`)**
+
    - Tests root endpoint (/)
    - Tests health endpoint (/health)
    - Verifies API is responding with JSON
 
 2. **API Integration Test (`npm test`)**
+
    - Tests all major endpoints
    - Verifies correct status codes
    - Tests error handling
@@ -66,12 +69,14 @@ npm run test:build
 ### Frontend Tests
 
 1. **Configuration Test (`npm test`)**
+
    - Checks environment variables
    - Verifies build configuration
    - Tests helper functions
    - Validates package.json
 
 2. **API Connection Test (`npm run test:api`)**
+
    - Tests connection to backend
    - Verifies CORS configuration
    - Tests proxy settings
@@ -84,11 +89,12 @@ npm run test:build
 ## Testing Different Environments
 
 ### Local Development
+
 ```bash
 # Start backend (in one terminal)
 cd backend && npm run dev
 
-# Start frontend (in another terminal) 
+# Start frontend (in another terminal)
 cd frontend && npm run dev
 
 # Run tests (in third terminal)
@@ -96,6 +102,7 @@ node test-full-stack.js
 ```
 
 ### Production Deployment
+
 ```bash
 # Test your deployed applications
 BACKEND_URL=https://your-backend.vercel.app FRONTEND_URL=https://your-frontend.vercel.app node test-full-stack.js
@@ -106,16 +113,19 @@ BACKEND_URL=https://your-backend.vercel.app FRONTEND_URL=https://your-frontend.v
 ### Common Issues
 
 1. **CORS Errors**
+
    - Check backend CORS configuration
    - Verify frontend URL is allowed in backend
    - Run: `cd frontend && npm run test:api`
 
 2. **Database Connection Fails**
+
    - Check MongoDB URI in environment variables
    - Verify network access to MongoDB
    - Run: `cd backend && npm run test:db`
 
 3. **API Not Responding**
+
    - Check if backend is running
    - Verify port configuration
    - Run: `cd backend && npm run test:health`
@@ -135,6 +145,7 @@ BACKEND_URL=https://your-backend.vercel.app FRONTEND_URL=https://your-frontend.v
 ## Environment Variables Required
 
 ### Backend (.env)
+
 ```env
 NODE_ENV=production
 MONGODB_URI=your_mongodb_connection_string
@@ -144,6 +155,7 @@ FRONTEND_URL=https://your-frontend.vercel.app
 ```
 
 ### Frontend (.env.production)
+
 ```env
 VITE_API_URL=https://your-backend.vercel.app
 ```

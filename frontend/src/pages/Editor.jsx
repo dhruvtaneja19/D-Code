@@ -105,7 +105,7 @@ const Editor = () => {
           body: JSON.stringify({
             token: token,
             projectId: id,
-          })
+          }),
         });
 
         if (data.success) {
@@ -136,7 +136,7 @@ const Editor = () => {
           token: localStorage.getItem("token"),
           projectId: id,
           code: code.trim(),
-        })
+        }),
       });
 
       if (data.success) {
@@ -228,8 +228,8 @@ const Editor = () => {
     setAiResponse("");
 
     try {
-      const result = await makeApiCall('/askAI', {
-        method: 'POST',
+      const result = await makeApiCall("/askAI", {
+        method: "POST",
         body: {
           code: code,
           question: aiQuestion,
