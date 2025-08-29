@@ -24,8 +24,9 @@ export const makeApiCall = async (endpoint, options = {}) => {
     // Construct the final URL with explicit single slash
     const url = cleanBaseUrl + "/" + cleanEndpoint;
 
-    // Final safety check - replace any double slashes with single slash (except for protocol://)
-    const safeUrl = url.replace(/([^:]\/)\/+/g, "$1");
+    // Enhanced safety check - replace any double slashes with single slash (except for protocol://)
+    // This regex is more thorough to catch all possible double slash patterns
+    const safeUrl = url.replace(/([^:])\/\/+/g, "$1/");
 
     console.log("=== API CALL DEBUG INFO ===");
     console.log("Original endpoint:", endpoint);

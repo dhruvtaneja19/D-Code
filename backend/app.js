@@ -67,9 +67,23 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
-// CORS configuration - Allow specific origin with credentials
+// CORS configuration - Allow both local and deployed frontend origins with credentials
 const corsOptions = {
-  origin: "http://localhost:5173", // Specific frontend origin
+  origin: function (origin, callback) {
+    // Allow requests from these origins
+    const allowedOrigins = [
+      "http://localhost:5173",
+      "https://d-code-eight.vercel.app"
+    ];
+    
+    // Allow requests with no origin (like mobile apps, curl requests)
+    if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      console.log("Blocked by CORS:", origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: [
@@ -86,14 +100,22 @@ app.use(cors(corsOptions));
 
 // Handle preflight OPTIONS requests manually for all routes
 app.options("*", (req, res) => {
-  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Content-Type, Authorization, X-Requested-With, Accept"
-  );
-  res.header("Access-Control-Allow-Credentials", "true");
-  res.status(204).send();
+  const allowedOrigins = ["http://localhost:5173", "https://d-code-eight.vercel.app"];
+  const origin = req.headers.origin;
+  
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+    res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, X-Requested-With, Accept"
+    );
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.status(204).send();
+  } else {
+    console.log("Blocked OPTIONS by CORS:", origin);
+    res.status(403).json({ error: "Not allowed by CORS" });
+  }
 });
 
 app.use("/", indexRouter);
