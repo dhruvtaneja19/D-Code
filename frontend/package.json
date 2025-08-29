@@ -13,7 +13,8 @@
     "test": "node test-frontend.js",
     "test:api": "node test-api-connection.js",
     "test:build": "npm run build && npm run preview",
-    "debug": "node debug-build.js"
+    "debug": "node debug-build.js",
+    "debug:api": "node debug-api-calls.js"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",

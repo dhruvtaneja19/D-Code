@@ -20,10 +20,39 @@ app.set("view engine", "ejs");
 
 app.use(logger("dev"));
 
+// Comprehensive request logging middleware
+app.use((req, res, next) => {
+  console.log(`\n🔍 [REQUEST DEBUG] ${new Date().toISOString()}`);
+  console.log(`Method: ${req.method}`);
+  console.log(`Original URL: ${req.url}`);
+  console.log(`Path: ${req.path}`);
+  console.log(`Query: ${JSON.stringify(req.query)}`);
+  console.log(
+    `Headers:`,
+    JSON.stringify(
+      {
+        origin: req.headers.origin,
+        "content-type": req.headers["content-type"],
+        "user-agent": req.headers["user-agent"]?.substring(0, 50) + "...",
+      },
+      null,
+      2
+    )
+  );
+  console.log(
+    `Body preview:`,
+    typeof req.body === "object"
+      ? JSON.stringify(req.body).substring(0, 100) + "..."
+      : "Not parsed yet"
+  );
+  next();
+});
+
 // URL cleanup middleware - Handle double slashes in URLs
 app.use((req, res, next) => {
   // Clean URL path if it contains double slashes
   if (req.url.includes("//")) {
+    console.log(`🚨 [URL Cleanup] DOUBLE SLASH DETECTED!`);
     console.log(`[URL Cleanup] Original URL: ${req.url}`);
     // Normalize multiple slashes to single slashes (except for protocol://)
     const cleanUrl = req.url.replace(/([^:])\/+/g, "$1/");
