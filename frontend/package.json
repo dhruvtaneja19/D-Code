@@ -6,15 +6,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "postbuild": "node debug-build.js",
     "lint": "eslint .",
     "preview": "vite preview",
     "vercel-build": "vite build",
     "test": "node test-frontend.js",
     "test:api": "node test-api-connection.js",
-    "test:build": "npm run build && npm run preview",
-    "debug": "node debug-build.js",
-    "debug:api": "node debug-api-calls.js"
+    "test:build": "npm run build && npm run preview"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",
