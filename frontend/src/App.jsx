@@ -1,8 +1,13 @@
 import React from "react";
 import "./App.css";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+} from "react-router-dom";
 import Home from "./pages/Home";
-import About from "./pages/About"; // Import the About page
 import NoPage from "./pages/NoPage";
 import SignUp from "./pages/SignUp";
 import Login from "./pages/Login";
@@ -12,10 +17,33 @@ const App = () => {
   return (
     <>
       <BrowserRouter>
+        <ScrollToHash />
         <RouteHandler />
       </BrowserRouter>
     </>
   );
+};
+
+const ScrollToHash = () => {
+  const location = useLocation();
+
+  React.useEffect(() => {
+    if (!location.hash) {
+      return;
+    }
+
+    const id = location.hash.replace("#", "");
+    const element = document.getElementById(id);
+
+    if (element) {
+      const navbarOffset = 96;
+      const yPosition = element.getBoundingClientRect().top + window.scrollY;
+      const targetPosition = Math.max(yPosition - navbarOffset, 0);
+      window.scrollTo({ top: targetPosition, behavior: "smooth" });
+    }
+  }, [location]);
+
+  return null;
 };
 
 const RouteHandler = () => {
@@ -27,8 +55,8 @@ const RouteHandler = () => {
         path="/"
         element={isLoggedIn ? <Home /> : <Navigate to={"/login"} />}
       />
-      <Route path="/about" element={<About />} />{" "}
-      {/* Add this line for About route */}
+      <Route path="/about" element={<Navigate to="/#about" replace />} />
+      <Route path="/features" element={<Navigate to="/#features" replace />} />
       <Route path="/signUp" element={<SignUp />} />
       <Route path="/login" element={<Login />} />
       <Route

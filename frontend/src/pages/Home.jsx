@@ -441,7 +441,7 @@ echo "My name is $name"`,
           Math.min(w, h) * 0.1,
           w / 2,
           h / 2,
-          Math.max(w, h) * 0.8
+          Math.max(w, h) * 0.8,
         );
         gradient.addColorStop(0, "#f8fafc");
         gradient.addColorStop(1, "#e0e7ef");
@@ -755,7 +755,7 @@ echo "My name is $name"`,
               </div>
 
               {/* Code Execution Section */}
-              <div className="flex flex-col min-h-[350px] lg:min-h-[400px]">
+              <div className="flex flex-col min-h-[300px] lg:min-h-[340px]">
                 {/* Language Tab */}
                 <div
                   className={`flex items-center justify-between px-6 py-3 border-b ${
@@ -796,8 +796,8 @@ echo "My name is $name"`,
                             ? "bg-green-900/30 text-green-400"
                             : "bg-green-100 text-green-600"
                           : darkMode
-                          ? "bg-gray-700 text-gray-400"
-                          : "bg-gray-200 text-gray-500"
+                            ? "bg-gray-700 text-gray-400"
+                            : "bg-gray-200 text-gray-500"
                       }`}
                     >
                       {isTerminalRunning ? (
@@ -818,7 +818,7 @@ echo "My name is $name"`,
 
                 {/* Code Display Area */}
                 <div
-                  className={`flex-1 p-6 font-mono text-sm ${
+                  className={`flex-1 p-4 font-mono text-sm ${
                     darkMode ? "bg-gray-900" : "bg-gray-900"
                   }`}
                 >
@@ -865,7 +865,7 @@ echo "My name is $name"`,
                         }`}
                         onClick={() => {
                           navigator.clipboard.writeText(
-                            codeExamples[currentCodeIndex].code
+                            codeExamples[currentCodeIndex].code,
                           );
                           // You could add a toast notification here
                         }}
@@ -1003,6 +1003,45 @@ echo "My name is $name"`,
           </div>
         </div>
 
+        {/* About Section */}
+        <div id="about" className="px-4 sm:px-8 lg:px-16 py-12">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            className="max-w-4xl mx-auto"
+          >
+            <div
+              className={`rounded-2xl p-8 sm:p-10 shadow-xl border transition-all duration-300 ${
+                darkMode
+                  ? "bg-gray-800/70 border-gray-700 text-gray-200"
+                  : "bg-white border-gray-200 text-gray-700"
+              }`}
+            >
+              <h2
+                className={`text-2xl sm:text-3xl font-bold mb-4 ${
+                  darkMode ? "text-white" : "text-gray-900"
+                }`}
+              >
+                About D CODE IDE
+              </h2>
+              <p className="text-base sm:text-lg leading-relaxed mb-4">
+                <span className="font-semibold">[D CODE]</span> is a versatile
+                integrated development environment designed for developers of
+                all levels. It supports multiple programming languages,
+                including Python, JavaScript, Java, C++, and more.
+              </p>
+              <p className="text-base sm:text-lg leading-relaxed">
+                Key features include intelligent code completion, real-time
+                collaboration, an integrated debugger, and a customizable
+                interface. Enhance your workflow with our extensive plugin
+                library and built-in terminal. Get started quickly with our
+                comprehensive documentation and tutorials.
+              </p>
+            </div>
+          </motion.div>
+        </div>
+
         {/* Projects Section */}
         <div className="px-4 sm:px-8 lg:px-16 py-16">
           <motion.div
@@ -1064,7 +1103,7 @@ echo "My name is $name"`,
                               color: getLanguageIcon(project.projLanguage)
                                 .color,
                             },
-                          }
+                          },
                         )}
                       </div>
                       <div className="flex space-x-2">
@@ -1162,7 +1201,10 @@ echo "My name is $name"`,
         </div>
 
         {/* About Section */}
-        <div className={`py-16 ${darkMode ? "bg-gray-800/50" : "bg-gray-100"}`}>
+        <div
+          id="features"
+          className={`py-16 ${darkMode ? "bg-gray-800/50" : "bg-gray-100"}`}
+        >
           <div className="max-w-4xl mx-auto px-4 sm:px-8 text-center">
             <motion.div
               initial={{ opacity: 0, y: 30 }}
@@ -1319,8 +1361,8 @@ echo "My name is $name"`,
                             ? "#a855f7"
                             : "#a855f7"
                           : darkMode
-                          ? "#4B5563"
-                          : "#D1D5DB",
+                            ? "#4B5563"
+                            : "#D1D5DB",
                         borderWidth: "1px",
                         borderRadius: "12px",
                         padding: "8px",

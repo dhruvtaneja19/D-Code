@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import logo from "../images/logos/logo.png";
-import logo2 from "../images/logos/logo2.png";
 import { Link, useNavigate } from "react-router-dom";
 import {
   SunIcon,
@@ -14,6 +13,7 @@ const NavbarNew = ({ darkMode, setDarkMode }) => {
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [userName, setUserName] = useState("User");
 
   // Handle scroll effect
   useEffect(() => {
@@ -22,6 +22,13 @@ const NavbarNew = ({ darkMode, setDarkMode }) => {
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const storedName = localStorage.getItem("userName");
+    if (storedName) {
+      setUserName(storedName);
+    }
   }, []);
 
   const navLinks = [
@@ -42,8 +49,8 @@ const NavbarNew = ({ darkMode, setDarkMode }) => {
             ? "bg-gray-900/95 backdrop-blur-lg shadow-xl border-b border-gray-700/50"
             : "bg-white/95 backdrop-blur-lg shadow-xl border-b border-gray-200/50"
           : darkMode
-          ? "bg-transparent"
-          : "bg-transparent"
+            ? "bg-transparent"
+            : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -70,8 +77,8 @@ const NavbarNew = ({ darkMode, setDarkMode }) => {
                   darkMode
                     ? "text-white"
                     : isScrolled
-                    ? "text-gray-900"
-                    : "text-white"
+                      ? "text-gray-900"
+                      : "text-white"
                 }`}
               >
                 D Code
@@ -81,8 +88,8 @@ const NavbarNew = ({ darkMode, setDarkMode }) => {
                   darkMode
                     ? "text-gray-300"
                     : isScrolled
-                    ? "text-gray-600"
-                    : "text-gray-100"
+                      ? "text-gray-600"
+                      : "text-gray-100"
                 }`}
               >
                 Your Coding Companion
@@ -105,8 +112,8 @@ const NavbarNew = ({ darkMode, setDarkMode }) => {
                     darkMode
                       ? "text-gray-300 hover:text-white"
                       : isScrolled
-                      ? "text-gray-700 hover:text-gray-900"
-                      : "text-white hover:text-purple-200"
+                        ? "text-gray-700 hover:text-gray-900"
+                        : "text-white hover:text-purple-200"
                   }`}
                 >
                   {link.name}
@@ -133,8 +140,8 @@ const NavbarNew = ({ darkMode, setDarkMode }) => {
                 darkMode
                   ? "bg-gray-800 hover:bg-gray-700 text-yellow-400"
                   : isScrolled
-                  ? "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                  : "bg-white/20 hover:bg-white/30 text-white"
+                    ? "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                    : "bg-white/20 hover:bg-white/30 text-white"
               }`}
               onClick={() => setDarkMode((prev) => !prev)}
               aria-label="Toggle theme"
@@ -172,8 +179,8 @@ const NavbarNew = ({ darkMode, setDarkMode }) => {
                 darkMode
                   ? "bg-gray-800 hover:bg-gray-700 text-gray-300"
                   : isScrolled
-                  ? "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                  : "bg-white/20 hover:bg-white/30 text-white"
+                    ? "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                    : "bg-white/20 hover:bg-white/30 text-white"
               }`}
               aria-label="Notifications"
             >
@@ -197,25 +204,19 @@ const NavbarNew = ({ darkMode, setDarkMode }) => {
               />
             </motion.button>
 
-            {/* User Avatars */}
-            <div className="hidden md:flex -space-x-2">
-              <motion.img
-                whileHover={{ scale: 1.1, zIndex: 10 }}
-                src={logo}
-                alt="Active user"
-                className="w-8 h-8 rounded-full border-2 border-white shadow-md"
-              />
-              <motion.img
-                whileHover={{ scale: 1.1, zIndex: 10 }}
-                src={logo2}
-                alt="Active user"
-                className="w-8 h-8 rounded-full border-2 border-white shadow-md"
-              />
+            {/* User Name */}
+            <div className="hidden md:flex items-center">
               <motion.div
-                whileHover={{ scale: 1.1, zIndex: 10 }}
-                className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-xs border-2 border-white shadow-md"
+                whileHover={{ scale: 1.03 }}
+                className={`px-4 py-2 rounded-xl text-sm font-semibold shadow-md border transition-all duration-200 ${
+                  darkMode
+                    ? "bg-gray-800 text-gray-100 border-gray-700"
+                    : isScrolled
+                      ? "bg-white text-gray-800 border-gray-200"
+                      : "bg-white/20 text-white border-white/30"
+                }`}
               >
-                +99
+                {userName}
               </motion.div>
             </div>
 
@@ -236,8 +237,8 @@ const NavbarNew = ({ darkMode, setDarkMode }) => {
                 darkMode
                   ? "text-white hover:bg-gray-800"
                   : isScrolled
-                  ? "text-gray-900 hover:bg-gray-100"
-                  : "text-white hover:bg-white/20"
+                    ? "text-gray-900 hover:bg-gray-100"
+                    : "text-white hover:bg-white/20"
               }`}
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Toggle menu"

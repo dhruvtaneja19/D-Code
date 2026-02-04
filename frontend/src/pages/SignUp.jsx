@@ -11,6 +11,16 @@ const SignUp = () => {
 
   const navigate = useNavigate();
 
+  const createGuestCredentials = () => {
+    const timestamp = Date.now();
+    const random = Math.random().toString(36).slice(2, 8);
+    return {
+      fullName: "Guest User",
+      email: `guest_${timestamp}_${random}@dcode.dev`,
+      pwd: `Guest@${Math.random().toString(36).slice(2, 10)}`,
+    };
+  };
+
   const submitForm = async (e) => {
     e.preventDefault();
 
@@ -28,6 +38,7 @@ const SignUp = () => {
       if (data.success) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("isLoggedIn", true);
+        localStorage.setItem("userName", fullName);
         window.location.href = "/";
       } else {
         toast.error(data.msg);
@@ -35,6 +46,47 @@ const SignUp = () => {
     } catch (error) {
       console.error("Signup failed:", error);
       toast.error("Failed to create account. Please try again.");
+    }
+  };
+
+  const handleGuestLogin = async () => {
+    try {
+      const maxAttempts = 3;
+
+      for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+        const guestCredentials = createGuestCredentials();
+
+        const signUpResponse = await makeApiCall("/signUp", {
+          method: "POST",
+          body: JSON.stringify(guestCredentials),
+        });
+
+        if (!signUpResponse.success) {
+          continue;
+        }
+
+        const loginResponse = await makeApiCall("/login", {
+          method: "POST",
+          body: JSON.stringify({
+            email: guestCredentials.email,
+            pwd: guestCredentials.pwd,
+          }),
+        });
+
+        if (loginResponse.success) {
+          localStorage.setItem("token", loginResponse.token);
+          localStorage.setItem("isLoggedIn", true);
+          localStorage.setItem("isGuest", true);
+          localStorage.setItem("userName", guestCredentials.fullName);
+          window.location.href = "/";
+          return;
+        }
+      }
+
+      toast.error("Unable to start a guest session. Please try again.");
+    } catch (error) {
+      console.error("Guest login failed:", error);
+      toast.error("Unable to start a guest session. Please try again.");
     }
   };
 
@@ -92,6 +144,14 @@ const SignUp = () => {
 
           <button className="btnNormal mt-3 bg-blue-500 transition-all hover:bg-blue-600">
             Sign Up
+          </button>
+
+          <button
+            type="button"
+            onClick={handleGuestLogin}
+            className="btnNormal mt-3 bg-gray-700 transition-all hover:bg-gray-600"
+          >
+            Continue as Guest
           </button>
         </form>
       </div>
