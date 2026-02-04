@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import NavbarNew from "../components/NavbarNew";
 import Footer from "../components/Footer";
 import Select from "react-select";
-import { api_base_url, makeApiCall } from "../helper";
+import { makeApiCall } from "../helper";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion"; // Framer Motion import
@@ -13,9 +13,8 @@ import {
   SiCplusplus,
   SiC,
   SiGnubash,
-  SiCoffeescript,
 } from "react-icons/si";
-import { IoTerminal, IoPlay, IoStop } from "react-icons/io5";
+import { IoTerminal, IoPlay } from "react-icons/io5";
 import { FaCode, FaJava } from "react-icons/fa";
 import { BiRightArrow } from "react-icons/bi";
 
@@ -116,36 +115,41 @@ echo "My name is $name"`,
     localStorage.setItem("dcode-darkmode", JSON.stringify(darkMode));
   }, [darkMode]);
 
-  // Terminal simulation effect
+  // Terminal simulation: advance example every 5s (single interval)
   useEffect(() => {
-    const interval = setInterval(() => {
+    const idxInterval = setInterval(() => {
       setCurrentCodeIndex((prev) => (prev + 1) % codeExamples.length);
-      setTerminalOutput([]);
-      setIsTerminalRunning(true);
-
-      // Simulate code execution
-      setTimeout(() => {
-        const currentExample = codeExamples[currentCodeIndex];
-        let outputIndex = 0;
-
-        const outputInterval = setInterval(() => {
-          if (outputIndex < currentExample.output.length) {
-            setTerminalOutput((prev) => [
-              ...prev,
-              currentExample.output[outputIndex],
-            ]);
-            outputIndex++;
-          } else {
-            setIsTerminalRunning(false);
-            clearInterval(outputInterval);
-          }
-        }, 800);
-
-        return () => clearInterval(outputInterval);
-      }, 1000);
     }, 5000);
+    return () => clearInterval(idxInterval);
+  }, []);
 
-    return () => clearInterval(interval);
+  // When currentCodeIndex changes, simulate execution output for that example
+  useEffect(() => {
+    setTerminalOutput([]);
+    setIsTerminalRunning(true);
+
+    const currentExample = codeExamples[currentCodeIndex];
+    let outputInterval;
+    const startTimeout = setTimeout(() => {
+      let outputIndex = 0;
+      outputInterval = setInterval(() => {
+        if (outputIndex < currentExample.output.length) {
+          setTerminalOutput((prev) => [
+            ...prev,
+            currentExample.output[outputIndex],
+          ]);
+          outputIndex++;
+        } else {
+          setIsTerminalRunning(false);
+          clearInterval(outputInterval);
+        }
+      }, 800);
+    }, 1000);
+
+    return () => {
+      clearTimeout(startTimeout);
+      if (outputInterval) clearInterval(outputInterval);
+    };
   }, [currentCodeIndex]);
 
   // Function to get language icon
@@ -422,103 +426,7 @@ echo "My name is $name"`,
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Live animated background effect
-  React.useEffect(() => {
-    const canvas = document.getElementById("bg-animated");
-    if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    let w = window.innerWidth;
-    let h = window.innerHeight;
-    canvas.width = w;
-    canvas.height = h;
-
-    // Gradient background for light mode
-    function drawGradientBg() {
-      if (!darkMode) {
-        const gradient = ctx.createRadialGradient(
-          w / 2,
-          h / 2,
-          Math.min(w, h) * 0.1,
-          w / 2,
-          h / 2,
-          Math.max(w, h) * 0.8,
-        );
-        gradient.addColorStop(0, "#f8fafc");
-        gradient.addColorStop(1, "#e0e7ef");
-        ctx.fillStyle = gradient;
-        ctx.fillRect(0, 0, w, h);
-      } else {
-        ctx.clearRect(0, 0, w, h);
-      }
-    }
-
-    // Pastel color palette for light mode (more saturated)
-    const pastelColors = [
-      "rgba(168,85,247,0.28)", // purple
-      "rgba(129,140,248,0.26)", // indigo
-      "rgba(56,189,248,0.25)", // cyan
-      "rgba(236,72,153,0.23)", // pink
-      "rgba(34,211,238,0.23)", // teal
-      "rgba(251,191,36,0.23)", // yellow
-      "rgba(59,130,246,0.22)", // blue
-      "rgba(244,114,182,0.22)", // fuchsia
-    ];
-
-    // Increase number and size of dots
-    let dots = Array.from({ length: 120 }, () => {
-      const baseColor = darkMode
-        ? `rgba(168,85,247,${Math.random() * 0.3 + 0.18})`
-        : pastelColors[Math.floor(Math.random() * pastelColors.length)];
-      return {
-        x: Math.random() * w,
-        y: Math.random() * h,
-        r: Math.random() * 4 + 2.5, // larger dots
-        dx: (Math.random() - 0.5) * 0.5,
-        dy: (Math.random() - 0.5) * 0.5,
-        color: baseColor,
-        opacity: Math.random() * 0.5 + 0.5, // higher min opacity
-        fade: Math.random() > 0.5 ? 1 : -1,
-      };
-    });
-
-    let animationId;
-    function animate() {
-      ctx.clearRect(0, 0, w, h); // Always clear first
-      if (!darkMode) {
-        drawGradientBg(); // Draw gradient for light mode
-      }
-      for (let dot of dots) {
-        ctx.save();
-        ctx.globalAlpha = dot.opacity;
-        ctx.beginPath();
-        ctx.arc(dot.x, dot.y, dot.r, 0, 2 * Math.PI);
-        ctx.fillStyle = dot.color;
-        ctx.fill();
-        ctx.restore();
-        dot.x += dot.dx;
-        dot.y += dot.dy;
-        // Animate opacity for dreamy effect
-        dot.opacity += 0.005 * dot.fade;
-        if (dot.opacity > 0.8) dot.fade = -1;
-        if (dot.opacity < 0.25) dot.fade = 1;
-        if (dot.x < 0 || dot.x > w) dot.dx *= -1;
-        if (dot.y < 0 || dot.y > h) dot.dy *= -1;
-      }
-      animationId = requestAnimationFrame(animate);
-    }
-    animate();
-    function handleResize() {
-      w = window.innerWidth;
-      h = window.innerHeight;
-      canvas.width = w;
-      canvas.height = h;
-    }
-    window.addEventListener("resize", handleResize);
-    return () => {
-      window.removeEventListener("resize", handleResize);
-      cancelAnimationFrame(animationId);
-    };
-  }, [darkMode]);
+  // Background canvas/animation removed: unused in current markup (no <canvas id="bg-animated" /> present)
 
   return (
     <>
@@ -1003,7 +911,7 @@ echo "My name is $name"`,
           </div>
         </div>
 
-        {/* About Section */}
+        {/* Features Section */}
         <div id="about" className="px-4 sm:px-8 lg:px-16 py-12">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
