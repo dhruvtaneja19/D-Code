@@ -3,10 +3,11 @@ require("dotenv").config();
 
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/codeIDE";
+    const mongoURI =
+      process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/codeIDE";
     console.log("🔌 [DB] Connecting to MongoDB...");
     console.log("🔌 [DB] URI starts with:", mongoURI.substring(0, 20) + "...");
-    
+
     await mongoose.connect(mongoURI);
     console.log("✅ [DB] MongoDB connected successfully");
   } catch (error) {
