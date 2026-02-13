@@ -8,8 +8,24 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/.*",
+      "methods": ["OPTIONS"],
+      "headers": {
+        "Access-Control-Allow-Origin": "https://d-code-new.vercel.app",
+        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Allow-Headers": "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+        "Access-Control-Allow-Credentials": "true",
+        "Access-Control-Max-Age": "86400"
+      },
       "dest": "/app.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/app.js",
+      "headers": {
+        "Access-Control-Allow-Origin": "https://d-code-new.vercel.app",
+        "Access-Control-Allow-Credentials": "true"
+      }
     }
   ],
   "env": {

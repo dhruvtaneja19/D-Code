@@ -33,6 +33,9 @@ export const testUrlConstruction = () => {
 
 // Helper function for API calls with better error handling
 export const makeApiCall = async (endpoint, options = {}) => {
+  // Declare finalURL outside try block so it's accessible in catch block
+  let finalURL = "";
+
   try {
     // COMPLETELY REWRITTEN URL HANDLING - NO CHANCE OF DOUBLE SLASHES
 
@@ -54,7 +57,7 @@ export const makeApiCall = async (endpoint, options = {}) => {
     }
 
     // Step 4: Construct final URL with guaranteed single slash separation
-    const finalURL = cleanEndpoint ? `${baseStr}/${cleanEndpoint}` : baseStr;
+    finalURL = cleanEndpoint ? `${baseStr}/${cleanEndpoint}` : baseStr;
 
     console.log("=== API CALL DEBUG INFO ===");
     console.log("Original endpoint:", endpoint);
@@ -63,7 +66,7 @@ export const makeApiCall = async (endpoint, options = {}) => {
     console.log("Final URL:", finalURL);
     console.log(
       "Environment:",
-      import.meta.env.PROD ? "PRODUCTION" : "DEVELOPMENT"
+      import.meta.env.PROD ? "PRODUCTION" : "DEVELOPMENT",
     );
     console.log("=== END DEBUG INFO ===");
 
