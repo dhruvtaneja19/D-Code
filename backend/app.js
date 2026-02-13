@@ -14,6 +14,43 @@ connectDB();
 
 var app = express();
 
+// CRITICAL: CORS MIDDLEWARE MUST BE ABSOLUTELY FIRST - Before ANY other middleware
+app.use((req, res, next) => {
+  // Use environment variable for allowed origins, fallback to hardcoded values
+  const allowedOrigins = process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim())
+    : ["http://localhost:5173", "https://d-code-new.vercel.app"];
+
+  const origin = req.get("origin");
+  console.log(`🌐 [CORS] Request from origin: ${origin || "no origin"}`);
+
+  // Allow requests from allowed origins or no origin (for testing)
+  if (!origin || allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin || "*");
+    res.header("Access-Control-Allow-Credentials", "true");
+    res.header(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, DELETE, OPTIONS",
+    );
+    res.header(
+      "Access-Control-Allow-Headers",
+      "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+    );
+    res.header("Access-Control-Max-Age", "86400"); // 24 hours
+    console.log(`✅ [CORS] Headers set for origin: ${origin || "no origin"}`);
+  } else {
+    console.log(`❌ [CORS] Blocked origin: ${origin}`);
+  }
+
+  // Handle preflight requests immediately - CRITICAL - Return 204 with headers
+  if (req.method === "OPTIONS") {
+    console.log(`🔄 [CORS] Handling OPTIONS preflight request - returning 204`);
+    return res.status(204).end();
+  }
+
+  next();
+});
+
 // view engine setup
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "ejs");
@@ -36,52 +73,15 @@ app.use((req, res, next) => {
         "user-agent": req.headers["user-agent"]?.substring(0, 50) + "...",
       },
       null,
-      2
-    )
+      2,
+    ),
   );
   console.log(
     `Body preview:`,
     typeof req.body === "object"
       ? JSON.stringify(req.body).substring(0, 100) + "..."
-      : "Not parsed yet"
+      : "Not parsed yet",
   );
-  next();
-});
-
-// CRITICAL: CORS MIDDLEWARE MUST BE FIRST - Place this BEFORE any other middleware
-app.use((req, res, next) => {
-  // Use environment variable for allowed origins, fallback to hardcoded values
-  const allowedOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim())
-    : ["http://localhost:5173", "https://d-code-new.vercel.app"];
-
-  const origin = req.get("origin");
-  console.log(`🌐 [CORS] Request from origin: ${origin || "no origin"}`);
-
-  // Allow requests from allowed origins or no origin (for testing)
-  if (!origin || allowedOrigins.includes(origin)) {
-    res.header("Access-Control-Allow-Origin", origin || "*");
-    res.header("Access-Control-Allow-Credentials", "true");
-    res.header(
-      "Access-Control-Allow-Methods",
-      "GET, POST, PUT, DELETE, OPTIONS"
-    );
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-    );
-    res.header("Access-Control-Max-Age", "86400"); // 24 hours
-    console.log(`✅ [CORS] Headers set for origin: ${origin || "no origin"}`);
-  } else {
-    console.log(`❌ [CORS] Blocked origin: ${origin}`);
-  }
-
-  // Handle preflight requests immediately - CRITICAL
-  if (req.method === "OPTIONS") {
-    console.log(`🔄 [CORS] Handling OPTIONS preflight request`);
-    return res.status(204).end();
-  }
-
   next();
 });
 
