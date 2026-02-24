@@ -208,9 +208,12 @@ echo "My name is $name"`,
   const [editProjId, setEditProjId] = useState("");
   const createModalRef = useRef(null);
   const editModalRef = useRef(null);
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
 
   useEffect(() => {
-    getProjects();
+    if (isLoggedIn) {
+      getProjects();
+    }
     getRunTimes();
   }, []);
 
@@ -556,7 +559,14 @@ echo "My name is $name"`,
                 <motion.button
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  onClick={() => setIsCreateModelShow(true)}
+                  onClick={() => {
+                    if (!isLoggedIn) {
+                      toast.info("Please login to create a project");
+                      navigate("/login");
+                      return;
+                    }
+                    setIsCreateModelShow(true);
+                  }}
                   className="px-8 py-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center"
                 >
                   <IoPlay className="mr-2" />
@@ -946,163 +956,173 @@ echo "My name is $name"`,
           </motion.div>
         </div>
 
-        {/* Projects Section */}
-        <div className="px-4 sm:px-8 lg:px-16 py-16">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            className="max-w-6xl mx-auto"
-          >
-            <div className="text-center mb-12">
-              <h2
-                className={`text-3xl lg:text-4xl font-bold mb-4 ${
-                  darkMode ? "text-white" : "text-gray-900"
-                }`}
-              >
-                Your Projects
-              </h2>
-              <p
-                className={`text-lg ${
-                  darkMode ? "text-gray-400" : "text-gray-600"
-                }`}
-              >
-                Manage and organize all your coding projects in one place
-              </p>
-            </div>
+        {/* Projects Section - Only show when logged in */}
+        {isLoggedIn && (
+          <div className="px-4 sm:px-8 lg:px-16 py-16">
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="max-w-6xl mx-auto"
+            >
+              <div className="text-center mb-12">
+                <h2
+                  className={`text-3xl lg:text-4xl font-bold mb-4 ${
+                    darkMode ? "text-white" : "text-gray-900"
+                  }`}
+                >
+                  Your Projects
+                </h2>
+                <p
+                  className={`text-lg ${
+                    darkMode ? "text-gray-400" : "text-gray-600"
+                  }`}
+                >
+                  Manage and organize all your coding projects in one place
+                </p>
+              </div>
 
-            {/* Projects Grid */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {projects && projects.length > 0 ? (
-                projects.map((project, index) => (
-                  <motion.div
-                    key={project._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                    whileHover={{ y: -5 }}
-                    className={`group cursor-pointer rounded-xl p-6 transition-all duration-300 ${
-                      darkMode
-                        ? "bg-gray-800 hover:bg-gray-750 border border-gray-700"
-                        : "bg-white hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md"
-                    }`}
-                    onClick={() => navigate(`/editor/${project._id}`)}
-                  >
-                    <div className="flex items-center justify-between mb-4">
-                      <div
-                        className="p-3 rounded-lg"
-                        style={{
-                          background: `linear-gradient(135deg, ${
-                            getLanguageIcon(project.projLanguage).color
-                          }20, ${
-                            getLanguageIcon(project.projLanguage).color
-                          }10)`,
-                        }}
-                      >
-                        {React.createElement(
-                          getLanguageIcon(project.projLanguage).icon,
-                          {
-                            className: "w-6 h-6",
-                            style: {
-                              color: getLanguageIcon(project.projLanguage)
-                                .color,
+              {/* Projects Grid */}
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {projects && projects.length > 0 ? (
+                  projects.map((project, index) => (
+                    <motion.div
+                      key={project._id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
+                      whileHover={{ y: -5 }}
+                      className={`group cursor-pointer rounded-xl p-6 transition-all duration-300 ${
+                        darkMode
+                          ? "bg-gray-800 hover:bg-gray-750 border border-gray-700"
+                          : "bg-white hover:bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md"
+                      }`}
+                      onClick={() => navigate(`/editor/${project._id}`)}
+                    >
+                      <div className="flex items-center justify-between mb-4">
+                        <div
+                          className="p-3 rounded-lg"
+                          style={{
+                            background: `linear-gradient(135deg, ${
+                              getLanguageIcon(project.projLanguage).color
+                            }20, ${
+                              getLanguageIcon(project.projLanguage).color
+                            }10)`,
+                          }}
+                        >
+                          {React.createElement(
+                            getLanguageIcon(project.projLanguage).icon,
+                            {
+                              className: "w-6 h-6",
+                              style: {
+                                color: getLanguageIcon(project.projLanguage)
+                                  .color,
+                              },
                             },
-                          },
-                        )}
+                          )}
+                        </div>
+                        <div className="flex space-x-2">
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setIsEditModelShow(true);
+                              setEditProjId(project._id);
+                              setName(project.name);
+                            }}
+                            className={`p-2 rounded-lg transition-colors ${
+                              darkMode
+                                ? "hover:bg-gray-700 text-gray-400 hover:text-blue-400"
+                                : "hover:bg-gray-100 text-gray-600 hover:text-blue-600"
+                            }`}
+                          >
+                            ✏️
+                          </motion.button>
+                          <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              deleteProject(project._id);
+                            }}
+                            className={`p-2 rounded-lg transition-colors ${
+                              darkMode
+                                ? "hover:bg-gray-700 text-gray-400 hover:text-red-400"
+                                : "hover:bg-gray-100 text-gray-600 hover:text-red-600"
+                            }`}
+                          >
+                            🗑️
+                          </motion.button>
+                        </div>
                       </div>
-                      <div className="flex space-x-2">
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setIsEditModelShow(true);
-                            setEditProjId(project._id);
-                            setName(project.name);
-                          }}
-                          className={`p-2 rounded-lg transition-colors ${
-                            darkMode
-                              ? "hover:bg-gray-700 text-gray-400 hover:text-blue-400"
-                              : "hover:bg-gray-100 text-gray-600 hover:text-blue-600"
-                          }`}
-                        >
-                          ✏️
-                        </motion.button>
-                        <motion.button
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            deleteProject(project._id);
-                          }}
-                          className={`p-2 rounded-lg transition-colors ${
-                            darkMode
-                              ? "hover:bg-gray-700 text-gray-400 hover:text-red-400"
-                              : "hover:bg-gray-100 text-gray-600 hover:text-red-600"
-                          }`}
-                        >
-                          🗑️
-                        </motion.button>
-                      </div>
-                    </div>
 
-                    <h3
-                      className={`text-lg font-semibold mb-2 ${
-                        darkMode ? "text-white" : "text-gray-900"
+                      <h3
+                        className={`text-lg font-semibold mb-2 ${
+                          darkMode ? "text-white" : "text-gray-900"
+                        }`}
+                      >
+                        {project.name}
+                      </h3>
+
+                      <div className="flex items-center justify-between">
+                        <span
+                          className={`text-sm ${
+                            darkMode ? "text-gray-400" : "text-gray-600"
+                          }`}
+                        >
+                          {project.projLanguage === "cpp"
+                            ? "C++"
+                            : project.projLanguage}
+                        </span>
+                        <span
+                          className={`text-sm ${
+                            darkMode ? "text-gray-500" : "text-gray-500"
+                          }`}
+                        >
+                          {new Date(project.date).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </motion.div>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-12">
+                    <div
+                      className={`text-6xl mb-4 ${
+                        darkMode ? "text-gray-600" : "text-gray-400"
                       }`}
                     >
-                      {project.name}
-                    </h3>
-
-                    <div className="flex items-center justify-between">
-                      <span
-                        className={`text-sm ${
-                          darkMode ? "text-gray-400" : "text-gray-600"
-                        }`}
-                      >
-                        {project.projLanguage === "cpp"
-                          ? "C++"
-                          : project.projLanguage}
-                      </span>
-                      <span
-                        className={`text-sm ${
-                          darkMode ? "text-gray-500" : "text-gray-500"
-                        }`}
-                      >
-                        {new Date(project.date).toLocaleDateString()}
-                      </span>
+                      📁
                     </div>
-                  </motion.div>
-                ))
-              ) : (
-                <div className="col-span-full text-center py-12">
-                  <div
-                    className={`text-6xl mb-4 ${
-                      darkMode ? "text-gray-600" : "text-gray-400"
-                    }`}
-                  >
-                    📁
+                    <p
+                      className={`text-lg mb-6 ${
+                        darkMode ? "text-gray-400" : "text-gray-600"
+                      }`}
+                    >
+                      No projects found. Create your first project to get
+                      started!
+                    </p>
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => {
+                        if (!isLoggedIn) {
+                          toast.info("Please login to create a project");
+                          navigate("/login");
+                          return;
+                        }
+                        setIsCreateModelShow(true);
+                      }}
+                      className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                    >
+                      Create First Project
+                    </motion.button>
                   </div>
-                  <p
-                    className={`text-lg mb-6 ${
-                      darkMode ? "text-gray-400" : "text-gray-600"
-                    }`}
-                  >
-                    No projects found. Create your first project to get started!
-                  </p>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setIsCreateModelShow(true)}
-                    className="px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-                  >
-                    Create First Project
-                  </motion.button>
-                </div>
-              )}
-            </div>
-          </motion.div>
-        </div>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
 
         {/* About Section */}
         <div

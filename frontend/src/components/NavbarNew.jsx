@@ -14,6 +14,7 @@ const NavbarNew = ({ darkMode, setDarkMode }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [userName, setUserName] = useState("User");
+  const isLoggedIn = localStorage.getItem("isLoggedIn");
 
   // Handle scroll effect
   useEffect(() => {
@@ -204,31 +205,69 @@ const NavbarNew = ({ darkMode, setDarkMode }) => {
               />
             </motion.button>
 
-            {/* User Name */}
-            <div className="hidden md:flex items-center">
-              <motion.div
-                whileHover={{ scale: 1.03 }}
-                className={`px-4 py-2 rounded-xl text-sm font-semibold shadow-md border transition-all duration-200 ${
-                  darkMode
-                    ? "bg-gray-800 text-gray-100 border-gray-700"
-                    : isScrolled
-                      ? "bg-white text-gray-800 border-gray-200"
-                      : "bg-white/20 text-white border-white/30"
-                }`}
-              >
-                {userName}
-              </motion.div>
-            </div>
+            {isLoggedIn ? (
+              <>
+                {/* User Name */}
+                <div className="hidden md:flex items-center">
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    className={`px-4 py-2 rounded-xl text-sm font-semibold shadow-md border transition-all duration-200 ${
+                      darkMode
+                        ? "bg-gray-800 text-gray-100 border-gray-700"
+                        : isScrolled
+                          ? "bg-white text-gray-800 border-gray-200"
+                          : "bg-white/20 text-white border-white/30"
+                    }`}
+                  >
+                    {userName}
+                  </motion.div>
+                </div>
 
-            {/* CTA Button */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="hidden sm:block bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
-              onClick={() => navigate("/signUp")}
-            >
-              Get Started
-            </motion.button>
+                {/* Logout Button */}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="hidden sm:block bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold px-5 py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 text-sm"
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    localStorage.removeItem("isLoggedIn");
+                    localStorage.removeItem("isGuest");
+                    localStorage.removeItem("userName");
+                    window.location.href = "/";
+                  }}
+                >
+                  Logout
+                </motion.button>
+              </>
+            ) : (
+              <>
+                {/* Login Button */}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className={`hidden sm:block font-semibold px-5 py-2.5 rounded-xl transition-all duration-300 text-sm ${
+                    darkMode
+                      ? "text-gray-200 hover:text-white border border-gray-600 hover:border-gray-400"
+                      : isScrolled
+                        ? "text-gray-700 hover:text-gray-900 border border-gray-300 hover:border-gray-500"
+                        : "text-white border border-white/40 hover:border-white/70"
+                  }`}
+                  onClick={() => navigate("/login")}
+                >
+                  Login
+                </motion.button>
+
+                {/* Sign Up / Get Started Button */}
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  className="hidden sm:block bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300"
+                  onClick={() => navigate("/signUp")}
+                >
+                  Get Started
+                </motion.button>
+              </>
+            )}
 
             {/* Mobile Menu Button */}
             <motion.button
@@ -312,15 +351,57 @@ const NavbarNew = ({ darkMode, setDarkMode }) => {
                   transition={{ delay: 0.4 }}
                   className="pt-4 border-t border-gray-700/50"
                 >
-                  <button
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg"
-                    onClick={() => {
-                      navigate("/signUp");
-                      setIsMenuOpen(false);
-                    }}
-                  >
-                    Get Started
-                  </button>
+                  {isLoggedIn ? (
+                    <>
+                      <div
+                        className={`px-4 py-3 mb-3 rounded-xl text-sm font-semibold text-center ${
+                          darkMode
+                            ? "bg-gray-800 text-gray-100"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
+                        {userName}
+                      </div>
+                      <button
+                        className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg"
+                        onClick={() => {
+                          localStorage.removeItem("token");
+                          localStorage.removeItem("isLoggedIn");
+                          localStorage.removeItem("isGuest");
+                          localStorage.removeItem("userName");
+                          setIsMenuOpen(false);
+                          window.location.href = "/";
+                        }}
+                      >
+                        Logout
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        className={`w-full mb-3 font-semibold px-6 py-3 rounded-xl border ${
+                          darkMode
+                            ? "text-gray-200 border-gray-600"
+                            : "text-gray-700 border-gray-300"
+                        }`}
+                        onClick={() => {
+                          navigate("/login");
+                          setIsMenuOpen(false);
+                        }}
+                      >
+                        Login
+                      </button>
+                      <button
+                        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 text-white font-semibold px-6 py-3 rounded-xl shadow-lg"
+                        onClick={() => {
+                          navigate("/signUp");
+                          setIsMenuOpen(false);
+                        }}
+                      >
+                        Get Started
+                      </button>
+                    </>
+                  )}
                 </motion.div>
               </div>
             </motion.div>

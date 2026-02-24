@@ -51,10 +51,7 @@ const RouteHandler = () => {
 
   return (
     <Routes>
-      <Route
-        path="/"
-        element={isLoggedIn ? <Home /> : <Navigate to={"/login"} />}
-      />
+      <Route path="/" element={<Home />} />
       <Route path="/about" element={<Navigate to="/#about" replace />} />
       <Route path="/features" element={<Navigate to="/#features" replace />} />
       <Route path="/signUp" element={<SignUp />} />
