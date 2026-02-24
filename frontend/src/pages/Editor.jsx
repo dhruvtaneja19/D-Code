@@ -81,6 +81,7 @@ const Editor = () => {
   const [aiResponse, setAiResponse] = useState("");
   const [aiLoading, setAiLoading] = useState(false);
   const [aiError, setAiError] = useState("");
+  const [userInput, setUserInput] = useState("");
   const dividerRef = useRef(null);
   const isResizing = useRef(false);
   const navigate = useNavigate();
@@ -198,7 +199,7 @@ const Editor = () => {
       body: JSON.stringify({
         language_id: languageId,
         source_code: code,
-        stdin: "",
+        stdin: userInput,
       }),
     })
       .then((res) => res.json())
@@ -366,6 +367,29 @@ const Editor = () => {
               >
                 Output
               </h2>
+
+              {/* Stdin Input Section */}
+              <div className="mb-2">
+                <label
+                  className={`text-xs font-semibold pl-1 ${
+                    darkMode ? "text-[#94A3B8]" : "text-[#64748B]"
+                  }`}
+                >
+                  📥 Input (stdin)
+                </label>
+                <textarea
+                  className={`w-full mt-1 p-3 text-sm font-mono rounded-lg border-2 resize-none transition-colors duration-300 focus:outline-none focus:ring-2 ${
+                    darkMode
+                      ? "bg-[#0F172A] border-[#334155] text-[#E2E8F0] placeholder-[#475569] focus:border-[#a855f7] focus:ring-[#a855f7]/30"
+                      : "bg-white border-[#c7d2fe] text-[#1E293B] placeholder-[#94A3B8] focus:border-[#6366f1] focus:ring-[#6366f1]/30"
+                  }`}
+                  rows={3}
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  placeholder="Enter input values here (one per line)..."
+                />
+              </div>
+
               <pre
                 className={`flex-1 p-4 text-base font-mono rounded-xl shadow-inner border-2 transition-colors duration-500 overflow-auto ${
                   error
