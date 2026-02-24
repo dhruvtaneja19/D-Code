@@ -215,24 +215,20 @@ echo "My name is $name"`,
   }, []);
 
   const getRunTimes = async () => {
-    let res = await fetch("https://emkc.org/api/v2/piston/runtimes");
-    let data = await res.json();
-
-    const filteredLanguages = [
-      "python",
-      "javascript",
-      "c",
-      "c++",
-      "java",
-      "bash",
+    // Hardcoded language options using Judge0 CE supported languages
+    const options = [
+      { label: "Python (3.12.5)", value: "python", version: "3.12.5" },
+      {
+        label: "JavaScript (Node.js 22.08.0)",
+        value: "javascript",
+        version: "22.08.0",
+      },
+      { label: "C (GCC 14.1.0)", value: "c", version: "14.1.0" },
+      { label: "C++ (GCC 14.1.0)", value: "cpp", version: "14.1.0" },
+      { label: "Java (JDK 17.0.6)", value: "java", version: "17.0.6" },
+      { label: "Bash (5.0.0)", value: "bash", version: "5.0.0" },
+      { label: "Go (1.23.5)", value: "go", version: "1.23.5" },
     ];
-    const options = data
-      .filter((runtime) => filteredLanguages.includes(runtime.language))
-      .map((runtime) => ({
-        label: `${runtime.language} (${runtime.version})`,
-        value: runtime.language === "c++" ? "cpp" : runtime.language,
-        version: runtime.version,
-      }));
 
     setLanguageOptions(options);
   };

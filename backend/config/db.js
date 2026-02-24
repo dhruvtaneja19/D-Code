@@ -9,9 +9,9 @@ const connectDB = async () => {
     console.log("🔌 [DB] URI starts with:", mongoURI.substring(0, 20) + "...");
 
     await mongoose.connect(mongoURI);
-    console.log("✅ [DB] MongoDB connected successfully");
+    console.log("[DB] MongoDB connected successfully");
   } catch (error) {
-    console.error("❌ [DB] MongoDB connection error:", error.message);
+    console.error(" [DB] MongoDB connection error:", error.message);
     // Don't exit process on Vercel - let the app handle errors gracefully
     if (process.env.NODE_ENV !== "production") {
       process.exit(1);

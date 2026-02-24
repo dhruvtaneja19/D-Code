@@ -167,6 +167,20 @@ const Editor = () => {
     return () => window.removeEventListener("keydown", handleSaveShortcut);
   }, [code]);
 
+  // Judge0 CE language ID mapping
+  const getJudge0LanguageId = (language) => {
+    const languageMap = {
+      python: 100, // Python 3.12.5
+      javascript: 102, // Node.js 22.08.0
+      java: 91, // Java JDK 17.0.6
+      cpp: 105, // C++ GCC 14.1.0
+      c: 103, // C GCC 14.1.0
+      go: 107, // Go 1.23.5
+      bash: 46, // Bash 5.0.0
+    };
+    return languageMap[language] || 100;
+  };
+
   const runProject = () => {
     if (!data) {
       toast.error("Project data not loaded yet!");
@@ -174,24 +188,37 @@ const Editor = () => {
     }
 
     setIsRunning(true);
-    fetch("https://emkc.org/api/v2/piston/execute", {
+
+    const languageId = getJudge0LanguageId(data.projLanguage);
+
+    // Submit code to Judge0 CE
+    fetch("https://ce.judge0.com/submissions?base64_encoded=false&wait=true", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        language: data.projLanguage,
-        version: data.version,
-        files: [
-          {
-            filename: data.projLanguage === "python" ? "main.py" : "main.txt",
-            content: code,
-          },
-        ],
+        language_id: languageId,
+        source_code: code,
+        stdin: "",
       }),
     })
       .then((res) => res.json())
-      .then((data) => {
-        setOutput(data?.run?.output || "No output");
-        setError(data?.run?.code === 1);
+      .then((result) => {
+        if (result.stdout) {
+          setOutput(result.stdout);
+          setError(false);
+        } else if (result.stderr) {
+          setOutput(result.stderr);
+          setError(true);
+        } else if (result.compile_output) {
+          setOutput(result.compile_output);
+          setError(true);
+        } else if (result.message) {
+          setOutput(result.message);
+          setError(true);
+        } else {
+          setOutput("No output");
+          setError(false);
+        }
       })
       .catch(() => setOutput("Error executing code."))
       .finally(() => setIsRunning(false));
@@ -344,8 +371,8 @@ const Editor = () => {
                   error
                     ? "text-[#F87171]"
                     : darkMode
-                    ? "text-[#34D399]"
-                    : "text-[#059669]"
+                      ? "text-[#34D399]"
+                      : "text-[#059669]"
                 } ${
                   darkMode
                     ? "bg-[#1E293B]/90 border-[#818cf8]"
